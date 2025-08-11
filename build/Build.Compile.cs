@@ -7,7 +7,6 @@ sealed partial class Build
     ///     Compile all solution configurations.
     /// </summary>
     Target Compile => _ => _
-        .DependsOn(Clean)
         .Executes(() =>
         {
             foreach (var configuration in GlobBuildConfigurations())
