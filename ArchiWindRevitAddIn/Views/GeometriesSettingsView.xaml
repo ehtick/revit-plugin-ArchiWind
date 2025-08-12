@@ -3,11 +3,188 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ArchiWindRevitAddIn.Views" xmlns:viewModel="clr-namespace:ArchiWindRevitAddIn.ViewModels"
+        xmlns:local="clr-namespace:ArchiWindRevitAddIn.Views"
+        xmlns:viewModel="clr-namespace:ArchiWindRevitAddIn.ViewModels"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewModel:GeometriesSettingsViewModel}"
         Title="Geometries Settings - ArchiWind" Height="450" Width="800">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Height" Value="20" />
+            <Setter Property="Width" Value="80" />
+            <Setter Property="Margin" Value="5" />
+        </Style>
+        <Style TargetType="ListBox">
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Visible" />
+            <Setter Property="ItemTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding Path=ToExport}" />
+                            <Label Content="{Binding Path=Name}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+
+        <Label FontSize="20" VerticalAlignment="Center" Margin="10,5,5,5">Categories Selection</Label>
+        <Label Grid.Row="1"
+               FontFamily="10"
+               VerticalAlignment="Center"
+               Margin="20,5,5,5">
+            You can here choose which categories you want to export in each type of view
+        </Label>
+
+        <TabControl Grid.Row="2" Margin="10">
+            <TabItem Header="Building" Name="BuildingTab">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="110" />
+                    </Grid.ColumnDefinitions>
+
+                    <GroupBox Header="Categories"
+                              Margin="5">
+                        <ListBox ItemsSource="{Binding Path=BuildingCategories}"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Stretch"
+                                 DisplayMemberPath="ToLabel"
+                                 Margin="5" />
+                    </GroupBox>
+
+                    <StackPanel Grid.Column="1" Orientation="Vertical">
+                        <Button Margin="5,20,5,5" Click="BTN_SelectAll_Click" Name="BTN_SelAll_Building">Select All</Button>
+                        <Button Click="BTN_DeselectAll_Click" Name="BTN_DeselAll_Building">Deselect All</Button>
+                    </StackPanel>
+
+                    <Button Grid.Column="1"
+                            Click="BTN_Default_Click"
+                            VerticalAlignment="Bottom"
+                            Margin="0,0,0,20">
+                        Default
+                    </Button>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Surroundings" Name="SurroundingsTab">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="110" />
+                    </Grid.ColumnDefinitions>
+
+                    <GroupBox Header="Categories"
+                              Margin="5">
+                        <ListBox ItemsSource="{Binding Path=SurroundingsCategories}"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Stretch"
+                                 Margin="5" />
+                    </GroupBox>
+
+                    <StackPanel Grid.Column="1"
+                                Orientation="Vertical">
+                        <Button Margin="5,20,5,5"
+                                Click="BTN_SelectAll_Click" Name="BTN_SelAll_Surroundings">
+                            Select All
+                        </Button>
+                        <Button Click="BTN_DeselectAll_Click" Name="BTN_DeselAll_Surroundings">Deselect All</Button>
+                    </StackPanel>
+
+                    <Button Grid.Column="1"
+                            Click="BTN_Default_Click"
+                            VerticalAlignment="Bottom"
+                            Margin="0,0,0,20">
+                        Default
+                    </Button>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Terrain" Name="TerrainTab">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="110" />
+                    </Grid.ColumnDefinitions>
+
+                    <GroupBox Header="Categories"
+                              Margin="5">
+                        <ListBox ItemsSource="{Binding Path=TerrainCategories}"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Stretch"
+                                 Margin="5" />
+                    </GroupBox>
+
+                    <StackPanel Grid.Column="1"
+                                Orientation="Vertical">
+                        <Button Margin="5,20,5,5"
+                                Click="BTN_SelectAll_Click" Name="BTN_SelAll_Terrain">
+                            Select All
+                        </Button>
+                        <Button Click="BTN_DeselectAll_Click" Name="BTN_DeselAll_Terrain">Deselect All</Button>
+                    </StackPanel>
+
+                    <Button Grid.Column="1"
+                            Click="BTN_Default_Click"
+                            VerticalAlignment="Bottom"
+                            Margin="0,0,0,20">
+                        Default
+                    </Button>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Vegetation" Name="VegetationTab">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="110" />
+                    </Grid.ColumnDefinitions>
+
+                    <GroupBox Header="Categories"
+                              Margin="5">
+                        <ListBox ItemsSource="{Binding Path=VegetationCategories}"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Stretch"
+                                 Margin="5" />
+                    </GroupBox>
+
+                    <StackPanel Grid.Column="1"
+                                Orientation="Vertical">
+                        <Button Margin="5,20,5,5"
+                                Click="BTN_SelectAll_Click" Name="BTN_SelAll_Vegetation">
+                            Select All
+                        </Button>
+                        <Button Click="BTN_DeselectAll_Click" Name="BTN_DeselAll_Vegetation">Deselect All</Button>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <StackPanel Grid.Row="3"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Click="BTN_OK_Click"
+                    Margin="5">
+                OK
+            </Button>
+            <Button Click="BTN_Close_Click"
+                    Margin="5,5,10,5">
+                Close
+            </Button>
+        </StackPanel>
+
+        <Button Grid.Column="1"
+                Click="BTN_Default_Click"
+                VerticalAlignment="Bottom"
+                Margin="0,0,0,20">
+            Default
+        </Button>
     </Grid>
 </Window>
