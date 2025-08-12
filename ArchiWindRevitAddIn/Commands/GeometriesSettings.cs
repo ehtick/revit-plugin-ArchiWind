@@ -8,14 +8,13 @@ namespace ArchiWindRevitAddIn.Commands
     /// <summary>
     ///     External command entry point
     /// </summary>
-    [UsedImplicitly]
-    [Transaction(TransactionMode.Manual)]
-    public class StartupCommand : ExternalCommand
+    [Transaction(TransactionMode.ReadOnly)]
+    public class GeometriesSettings : ExternalCommand
     {
         public override void Execute()
         {
-            var viewModel = new ArchiWindRevitAddInViewModel();
-            var view = new ArchiWindRevitAddInView(viewModel);
+            var viewModel = new GeometriesSettingsViewModel();
+            var view = new GeometriesSettingsView(viewModel);
             view.ShowDialog();
         }
     }

@@ -1,15 +1,15 @@
 ﻿<Window
-    x:Class="ArchiWindRevitAddIn.Views.ArchiWindRevitAddInView"
+    x:Class="ArchiWindRevitAddIn.Views.CreateSimulationView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:viewModel="clr-namespace:ArchiWindRevitAddIn.ViewModels"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance viewModel:ArchiWindRevitAddInViewModel}"
+    d:DataContext="{d:DesignInstance viewModel:CreateSimulationViewModel}"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
-    Title="ArchiWind"
+    Title="Create Simulation - ArchiWind"
     Height="450"
     Width="800">
     <Grid>

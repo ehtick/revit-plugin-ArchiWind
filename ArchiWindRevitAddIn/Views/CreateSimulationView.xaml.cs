@@ -1,10 +1,11 @@
 ﻿using ArchiWindRevitAddIn.ViewModels;
+using System.Windows;
 
 namespace ArchiWindRevitAddIn.Views
 {
-    public sealed partial class ArchiWindRevitAddInView
+    public sealed partial class CreateSimulationView : Window
     {
-        public ArchiWindRevitAddInView(ArchiWindRevitAddInViewModel viewModel)
+        public CreateSimulationView(CreateSimulationViewModel viewModel)
         {
             DataContext = viewModel;
             InitializeComponent();
