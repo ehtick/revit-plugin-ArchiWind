@@ -1,12 +1,16 @@
 ﻿<RevitAddIns>
     <AddIn Type="Application">
-        <Name>ArchiWindRevitAddIn</Name>
+        <Name>ArchiWind</Name>
         <Assembly>ArchiWindRevitAddIn\ArchiWindRevitAddIn.dll</Assembly>
         <AddInId>96C8BFC7-C2B4-4813-A125-E2C5B2C3AAA2</AddInId>
         <FullClassName>ArchiWindRevitAddIn.Application</FullClassName>
-        <VendorId>Development</VendorId>
-        <VendorDescription></VendorDescription>
-        <VendorEmail></VendorEmail>
+        <VisibilityMode>NotVisibleInFamily</VisibilityMode>
+        <VendorId>NablaFlow</VendorId>
+        <VendorDescription>NablaFlow AS, https://nablaflow.io</VendorDescription>
+        <VendorEmail>engineering@nablaflow.io</VendorEmail>
+        <LongDescription>
+            Leverage ArchiWind simulations in your project to obtain high-quality wind assessments.
+        </LongDescription>
     </AddIn>
     <ManifestSettings>
         <UseRevitContext>False</UseRevitContext>
