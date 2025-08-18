@@ -62,10 +62,9 @@
         <!-- MVVM -->
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     </ItemGroup>
-    
+
     <ItemGroup>
-        <Resource Include="Resources\Icons\RibbonIcon16.png" />
-        <Resource Include="Resources\Icons\RibbonIcon32.png" />
+      <Resource Include="Resources\Icons\icon.ico" />
     </ItemGroup>
 
 </Project>
