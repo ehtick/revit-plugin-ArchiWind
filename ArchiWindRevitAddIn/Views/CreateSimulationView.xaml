@@ -35,7 +35,7 @@
                     <ColumnDefinition Width="140"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                
+
                 <Label Grid.Column="0" Grid.Row="0" Content="Project:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" />
                 <Grid Grid.Column="1" Grid.Row="0" Margin="0,4,5,4"  VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
@@ -43,13 +43,22 @@
                         <ColumnDefinition Width="60"/>
                     </Grid.ColumnDefinitions>
 
-                    <ComboBox Grid.Column="0" Margin="0,0,10,0"/>
+                    <ComboBox
+                        Grid.Column="0"
+                        Margin="0,0,10,0"
+                        SelectedItem="{Binding Path=SelectedProject, ValidatesOnNotifyDataErrors=True}"
+                        ItemsSource="{Binding Path=Projects}"
+                        DisplayMemberPath="Name"
+                        ToolTip="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={RelativeSource Self}}" />
+
                     <Button Grid.Column="1" Content="New..." />
                 </Grid>
-                
+
                 <Label Grid.Column="0" Grid.Row="1" Content="Name:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" />
-                <TextBox Grid.Column="1" Grid.Row="1" Margin="0,0,5,0"  VerticalAlignment="Center" MinHeight="25"/>
-                
+                <TextBox Grid.Column="1" Grid.Row="1" Margin="0,0,5,0"  VerticalAlignment="Center" MinHeight="25"
+                         Text="{Binding Path=Name, ValidatesOnNotifyDataErrors=True}"
+                         ToolTip="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={RelativeSource Self}}" />
+
                 <Label Grid.Column="0" Grid.Row="2" Content="Quality:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" />
                 <Grid Grid.Column="1" Grid.Row="2" Margin="0,4,5,4" VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
@@ -60,7 +69,7 @@
                     <RadioButton Grid.Column="0" Content="Draft" IsChecked="True" />
                     <RadioButton Grid.Column="1" Content="Detailed" />
                 </Grid>
-                
+
                 <Label Grid.Column="0" Grid.Row="3" Content="Coordinates (WSG 84):" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" />
                 <Grid Grid.Column="1" Grid.Row="3" VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
@@ -70,9 +79,18 @@
                         <ColumnDefinition Width="30"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBox Grid.Column="0" MinHeight="25" />
+                    <TextBox
+                        Grid.Column="0"
+                        Text="{Binding Latitude, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                        ToolTip="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={RelativeSource Self}}" />
+
                     <Label Grid.Column="1" Content="lat" HorizontalAlignment="Left" />
-                    <TextBox Grid.Column="2" MinHeight="25" />
+
+                    <TextBox
+                        Grid.Column="2" 
+                        Text="{Binding Longitude, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                        ToolTip="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={RelativeSource Self}}" />
+
                     <Label Grid.Column="3" Content="lon" HorizontalAlignment="Left" />
                 </Grid>
             </Grid>
@@ -90,13 +108,32 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="140"/>
                         <ColumnDefinition/>
+                        <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
                     <Label Grid.Column="0" Grid.Row="0" Content="EPSG:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" />
-                    <ComboBox Grid.Column="1" Grid.Row="0" Margin="0,5,0,5" Width="100" HorizontalAlignment="Left" MinHeight="25"/>
+                    <ComboBox
+                        Grid.Column="1"
+                        Grid.Row="0"
+                        Margin="0,5,0,5"
+                        Width="120"
+                        HorizontalAlignment="Left"
+                        MinHeight="25"
+                        SelectedItem="{Binding Path=SelectedRefSystem, ValidatesOnNotifyDataErrors=True}"
+                        ItemsSource="{Binding Path=RefSystems}"
+                        ToolTip="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={RelativeSource Self}}"
+                        />
+                    <Button
+                        Grid.Column="2"
+                        Content="Clear"
+                        Width="75"
+                        Margin="-40,7,0,7"
+                        HorizontalAlignment="Left"
+                        Command="{Binding ClearRefSystem}"
+                        />
                 </Grid>
             </Expander.Content>
-            
+
         </Expander>
 
         <GroupBox Name="Geometries" Grid.Row="2" Margin="0,5,0,0" Header="Geometries">
@@ -118,18 +155,18 @@
                 <CheckBox Grid.Column="2" Grid.Row="0" Content="Terrain" IsChecked="True" />
                 <CheckBox Grid.Column="3" Grid.Row="0" Content="Vegetation" IsChecked="True" />
 
-                <Button Grid.Row="1" Margin="0,10,0,0" Content="Edit Categories..." Grid.ColumnSpan="4" HorizontalAlignment="Right" MinWidth="120"/>
+                <Button Grid.Row="1" Margin="0,10,-5,0" Content="Edit Categories..." Grid.ColumnSpan="4" HorizontalAlignment="Right" MinWidth="120"/>
             </Grid>
         </GroupBox>
 
-        <Grid Name="Actions" Grid.Row="3" Margin="10,10,10,10" HorizontalAlignment="Right">
+        <Grid Name="Actions" Grid.Row="3" Margin="0,0,0,0" HorizontalAlignment="Right">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="75"/>
                 <ColumnDefinition Width="75"/>
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" Content="Create" Margin="0,0,10,0" IsDefault="True" />
-            <Button Grid.Column="1" Content="Cancel" Margin="0,0,10,0" IsCancel="True" />
+            <Button Grid.Column="0" Content="Create" Margin="0,10,10,10" IsDefault="True" />
+            <Button Grid.Column="1" Content="Cancel" Margin="0,10,10,10" IsCancel="True" />
         </Grid>
     </Grid>
 </Window>

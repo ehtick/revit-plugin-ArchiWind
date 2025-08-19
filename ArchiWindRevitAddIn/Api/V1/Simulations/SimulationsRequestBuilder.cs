@@ -70,11 +70,11 @@ namespace ArchiwindRevitAddIn.Api.V1.Simulations
         /// <exception cref="global::ArchiwindRevitAddIn.Api.Models.JsonErrorResponse">When receiving a 422 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<global::ArchiwindRevitAddIn.Api.Models.SimulationV1?> PostAsync(global::ArchiwindRevitAddIn.Api.Models.CreateSimulationV7Params body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::ArchiwindRevitAddIn.Api.Models.SimulationV1?> PostAsync(global::ArchiwindRevitAddIn.Api.Models.CreateSimulationV1Params body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<global::ArchiwindRevitAddIn.Api.Models.SimulationV1> PostAsync(global::ArchiwindRevitAddIn.Api.Models.CreateSimulationV7Params body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::ArchiwindRevitAddIn.Api.Models.SimulationV1> PostAsync(global::ArchiwindRevitAddIn.Api.Models.CreateSimulationV1Params body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             _ = body ?? throw new ArgumentNullException(nameof(body));
@@ -94,11 +94,11 @@ namespace ArchiwindRevitAddIn.Api.V1.Simulations
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToPostRequestInformation(global::ArchiwindRevitAddIn.Api.Models.CreateSimulationV7Params body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToPostRequestInformation(global::ArchiwindRevitAddIn.Api.Models.CreateSimulationV1Params body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToPostRequestInformation(global::ArchiwindRevitAddIn.Api.Models.CreateSimulationV7Params body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToPostRequestInformation(global::ArchiwindRevitAddIn.Api.Models.CreateSimulationV1Params body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
         {
 #endif
             _ = body ?? throw new ArgumentNullException(nameof(body));

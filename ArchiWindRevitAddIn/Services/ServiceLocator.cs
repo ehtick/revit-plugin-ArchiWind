@@ -51,7 +51,8 @@ namespace ArchiWindRevitAddIn.Services
             return new HttpClient(requestAdapter);
         }
 
-        private static string GetBaseUrl() {
+        private static string GetBaseUrl()
+        {
             return Environment.GetEnvironmentVariable("ARCHIWIND_BASEURL") ?? BASE_URL;
         }
 
@@ -59,13 +60,14 @@ namespace ArchiWindRevitAddIn.Services
         {
             if (!string.IsNullOrEmpty(apiKey))
             {
-                return new ApiKeyAuthenticationProvider(apiKey);
+                return new ApiKeyAuthenticationProvider(apiKey!);
             }
 
             return new AnonymousAuthenticationProvider();
         }
 
-        private static string? GetApiKey() {
+        private static string? GetApiKey()
+        {
             return GetApiKeyFromSettings() ?? GetApiKeyFromEnvironment();
         }
 
@@ -100,7 +102,7 @@ namespace ArchiWindRevitAddIn.Services
         public Task AuthenticateRequestAsync(RequestInformation request, Dictionary<string, object>? additionalAuthenticationContext = null, CancellationToken cancellationToken = default)
         {
             request.Headers.TryAdd("x-nablaflow-token", _apiKey);
-            
+
             return Task.CompletedTask;
         }
     }

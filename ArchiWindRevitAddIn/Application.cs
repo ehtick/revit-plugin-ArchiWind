@@ -1,5 +1,4 @@
-﻿using ArchiWindRevitAddIn.Commands;
-using ArchiWindRevitAddIn.Services;
+﻿using ArchiWindRevitAddIn.Services;
 using Nice3point.Revit.Toolkit.External;
 
 namespace ArchiWindRevitAddIn
@@ -48,7 +47,8 @@ namespace ArchiWindRevitAddIn
             {
                 ServiceLocator.Initialize();
                 System.Diagnostics.Debug.WriteLine("Initialised API services");
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Failed to initialise API services: {ex.Message}");
             }
