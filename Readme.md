@@ -10,6 +10,7 @@ Autodesk Revit plugin project organized into multiple solution files that target
 * [Project Structure](#project-structure)
 * [Building](#building)
   * [Building the MSI installer and the Autodesk bundle on local machine](#building-the-msi-installer-and-the-autodesk-bundle-on-local-machine)
+* [Updating the API schema](#updating-api-schema)
 * [Publishing Releases](#publishing-releases)
   * [Creating a new Release from the JetBrains Rider](#creating-a-new-release-from-the-jetbrains-rider)
   * [Creating a new Release from the Terminal](#creating-a-new-release-from-the-terminal)
@@ -71,6 +72,12 @@ Also, you can use Visual Studio. If you don't have Visual Studio installed, down
 1. Open Visual Studio
 2. In the `Solutions Configuration` drop-down menu, select `Release R25` or `Debug R25`. Suffix `R25` means compiling for the Revit 2025.
 3. After the solution loads, you can build it by clicking on `Build -> Build Solution`.
+
+## Updating the API schema
+
+```powershell
+kiota generate --openapi "https://api.nablaflow.io/archiwind/openapi" --language CSharp --output .\ArchiWindRevitAddIn\Api\ --class-name HttpClient --namespace-name ArchiwindRevitAddIn.Api
+```
 
 ### Building the MSI installer and the Autodesk bundle on local machine
 

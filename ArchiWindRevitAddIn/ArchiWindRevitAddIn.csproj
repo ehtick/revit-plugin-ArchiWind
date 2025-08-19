@@ -50,9 +50,13 @@
         <IsRepackable>false</IsRepackable>
         <DeployRevitAddin>true</DeployRevitAddin>
     </PropertyGroup>
+    <ItemGroup>
+      <None Remove="Api\.kiota.log" />
+    </ItemGroup>
 
     <ItemGroup>
         <!-- Revit References -->
+        <PackageReference Include="Microsoft.Kiota.Bundle" Version="1.19.1" />
         <PackageReference Include="Nice3point.Revit.Build.Tasks" Version="3.0.1" />
         <PackageReference Include="Nice3point.Revit.Toolkit" Version="$(RevitVersion).*" />
         <PackageReference Include="Nice3point.Revit.Extensions" Version="$(RevitVersion).*" />

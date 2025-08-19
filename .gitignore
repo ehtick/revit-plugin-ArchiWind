@@ -19,3 +19,5 @@
 
 #User-specific files
 *.user
+
+*.log
