@@ -1,4 +1,6 @@
-﻿using Nice3point.Revit.Toolkit.External;
+﻿using ArchiWindRevitAddIn.Commands;
+using ArchiWindRevitAddIn.Services;
+using Nice3point.Revit.Toolkit.External;
 
 namespace ArchiWindRevitAddIn
 {
@@ -8,9 +10,17 @@ namespace ArchiWindRevitAddIn
     public class Application : ExternalApplication
     {
         private const string TAB_NAME = "ArchiWind";
+
         public override void OnStartup()
         {
+            InitialiseServices();
+
             CreateRibbon();
+        }
+
+        public override void OnShutdown()
+        {
+            ServiceLocator.Dispose();
         }
 
         private void CreateRibbon()
@@ -30,6 +40,18 @@ namespace ArchiWindRevitAddIn
             settingsPanel.AddPushButton<Commands.AccountSettings>("Account")
                 .SetImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon16.png")
                 .SetLargeImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon32.png");
+        }
+
+        private void InitialiseServices()
+        {
+            try
+            {
+                ServiceLocator.Initialize();
+                System.Diagnostics.Debug.WriteLine("Initialised API services");
+            } catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to initialise API services: {ex.Message}");
+            }
         }
     }
 }
