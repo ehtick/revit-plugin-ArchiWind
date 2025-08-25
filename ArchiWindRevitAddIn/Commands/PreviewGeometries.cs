@@ -45,35 +45,10 @@ namespace ArchiWindRevitAddIn.Commands
                 var vegetationView = CreateView(VEGETATION_VIEW, doc, ActiveView);
                 var terrainView = CreateView(TERRAIN_VIEW, doc, ActiveView);
 
-#if REVIT2025_OR_GREATER
-                OnlyShowCategories(doc, buildingView, [
-                    BuiltInCategory.OST_Ceilings,
-                    BuiltInCategory.OST_Curtain_Systems,
-                    BuiltInCategory.OST_CurtainGrids,
-                    BuiltInCategory.OST_CurtainWallMullions,
-                    BuiltInCategory.OST_CurtainWallPanels,
-                    BuiltInCategory.OST_Doors,
-                    BuiltInCategory.OST_Floors,
-                    BuiltInCategory.OST_Mass,
-                    BuiltInCategory.OST_Railings,
-                    BuiltInCategory.OST_Roofs,
-                    BuiltInCategory.OST_Stairs,
-                    BuiltInCategory.OST_StairsRailing,
-                    BuiltInCategory.OST_Walls,
-                    BuiltInCategory.OST_Windows,
-                ]);
-                OnlyShowCategories(doc, surroundingsView, [
-                    BuiltInCategory.OST_Roads,
-                    BuiltInCategory.OST_Site,
-                ]);
-                OnlyShowCategories(doc, vegetationView, [
-                    BuiltInCategory.OST_Planting
-                ]);
-                OnlyShowCategories(doc, terrainView, [
-                    BuiltInCategory.OST_Topography,
-                    BuiltInCategory.OST_Toposolid,
-                ]);
-#endif
+                OnlyShowCategories(doc, buildingView, Models.Categories.DefaultBuildingCategories);
+                OnlyShowCategories(doc, surroundingsView, Models.Categories.DefaultSurroundingsCategories);
+                OnlyShowCategories(doc, vegetationView, Models.Categories.DefaultVegetationCategories);
+                OnlyShowCategories(doc, terrainView, Models.Categories.DefaultTerrainCategories);
 
                 t.Commit();
             }
@@ -110,7 +85,6 @@ namespace ArchiWindRevitAddIn.Commands
             //currentDocument.Export("C:\\Users\\your mom\\Desktop", "terrain.stl", exportOptions);
         }
 
-#if REVIT2025_OR_GREATER
         private static void OnlyShowCategories(Document doc, View3D view, ImmutableHashSet<BuiltInCategory> showCategories)
         {
             foreach (Category cat in doc.Settings.Categories)
@@ -120,10 +94,15 @@ namespace ArchiWindRevitAddIn.Commands
                     continue;
                 }
 
-                view.SetCategoryHidden(cat.Id, !showCategories.Contains(cat.BuiltInCategory));
+#if REVIT2023_OR_GREATER
+                var asBuiltInCategory = cat.BuiltInCategory;
+#else
+                var asBuiltInCategory = (BuiltInCategory)cat.Id.IntegerValue;
+#endif
+
+                view.SetCategoryHidden(cat.Id, !showCategories.Contains(asBuiltInCategory));
             }
         }
-#endif
 
         private static void DeleteViewIfExists(string name, Document doc)
         {
