@@ -15,6 +15,12 @@ namespace ArchiWindRevitAddIn.Models.Validators
             RuleFor(sim => sim.RefSystem)
                 .Must(refSystem => refSystem == null || Epsg.Values.Contains(refSystem!.Value))
                 .WithMessage("EPSG must be included in list of values");
+
+            static bool oneOfGeometries(CreateSimulationForm sim, bool flag) => sim.HasBuilding || sim.HasSurroundings || sim.HasTerrain;
+
+            RuleFor(sim => sim.HasBuilding).Must(oneOfGeometries).WithMessage("At least one geometry type must be selected");
+            RuleFor(sim => sim.HasSurroundings).Must(oneOfGeometries).WithMessage("At least one geometry type must be selected");
+            RuleFor(sim => sim.HasTerrain).Must(oneOfGeometries).WithMessage("At least one geometry type must be selected");
         }
     }
 }

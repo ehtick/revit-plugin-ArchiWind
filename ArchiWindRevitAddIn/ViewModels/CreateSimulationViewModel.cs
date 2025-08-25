@@ -3,6 +3,7 @@ using ArchiWindRevitAddIn.Models;
 using ArchiWindRevitAddIn.Models.Forms;
 using ArchiWindRevitAddIn.Models.Validators;
 using ArchiWindRevitAddIn.Services;
+using ArchiWindRevitAddIn.Views;
 using ArchiWindRevitAddIn.Views.Helpers;
 using FluentValidation;
 using System.Collections;
@@ -44,6 +45,35 @@ namespace ArchiWindRevitAddIn.ViewModels
         [ObservableProperty]
         private int? selectedRefSystem;
 
+        [ObservableProperty]
+        private bool hasBuilding = false;
+
+        [ObservableProperty]
+        private bool hasSurroundings = false;
+
+        [ObservableProperty]
+        private bool hasTerrain = false;
+
+        [ObservableProperty]
+        private bool hasVegetation = false;
+
+        [ObservableProperty]
+        public string geometriesStatus = "";
+
+        [ObservableProperty]
+        private bool isBuildingEnabled;
+
+        [ObservableProperty]
+        private bool areSurroundingsEnabled;
+
+        [ObservableProperty]
+        private bool isTerrainEnabled;
+
+        [ObservableProperty]
+        private bool isVegetationEnabled;
+
+        public Visibility GeometriesStatusVisibility => GeometriesStatus.Length > 0 ? Visibility.Visible : Visibility.Invisible;
+
         public ObservableCollection<ProjectV1> Projects { get; } = [];
 
         public ObservableCollection<int> RefSystems { get; } = [];
@@ -68,6 +98,11 @@ namespace ArchiWindRevitAddIn.ViewModels
             CreateCommand = new ActionCommand(Create, CanCreate);
 
             _ = LoadProjectsAsync();
+
+            Name = document.Title;
+            PerformLoadCoordinatesFromDocument();
+
+            UpdateGeometriesControls();
         }
 
         private bool CanCreate(object? obj)
@@ -184,7 +219,41 @@ namespace ArchiWindRevitAddIn.ViewModels
             }
 
             simParams.RefSystem = value.Value;
-            ValidateProperty("RefSystem");
+            ValidateProperty(nameof(simParams.RefSystem));
+        }
+
+        partial void OnHasSurroundingsChanged(bool value)
+        {
+            simParams.HasSurroundings = value;
+
+            errors.Remove(nameof(HasBuilding));
+            errors.Remove(nameof(HasTerrain));
+            ValidateProperty(nameof(HasSurroundings));
+        }
+
+        partial void OnHasBuildingChanged(bool value)
+        {
+            simParams.HasBuilding = value;
+
+            errors.Remove(nameof(HasSurroundings));
+            errors.Remove(nameof(HasTerrain));
+            ValidateProperty(nameof(HasBuilding));
+        }
+
+        partial void OnHasTerrainChanged(bool value)
+        {
+            simParams.HasTerrain = value;
+
+            errors.Remove(nameof(HasSurroundings));
+            errors.Remove(nameof(HasBuilding));
+            ValidateProperty(nameof(HasTerrain));
+        }
+
+        partial void OnHasVegetationChanged(bool value)
+        {
+            simParams.HasVegetation = value;
+
+            ValidateProperty(nameof(HasVegetation));
         }
 
         private void ValidateProperty(string propertyName)
@@ -245,6 +314,19 @@ namespace ArchiWindRevitAddIn.ViewModels
             finally
             {
                 Mouse.OverrideCursor = null;
+            }
+        }
+
+        private void UpdateGeometriesControls()
+        {
+            IsBuildingEnabled = Utils.FindView(Document, Utils.BUILDING_VIEW) != null;
+            AreSurroundingsEnabled = Utils.FindView(Document, Utils.SURROUNDINGS_VIEW) != null;
+            IsTerrainEnabled = Utils.FindView(Document, Utils.TERRAIN_VIEW) != null;
+            IsVegetationEnabled = Utils.FindView(Document, Utils.VEGETATION_VIEW) != null;
+
+            if (!(IsBuildingEnabled || AreSurroundingsEnabled || IsVegetationEnabled || IsTerrainEnabled))
+            {
+                GeometriesStatus = "One or more preview view is missing.";
             }
         }
     }

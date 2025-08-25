@@ -10,5 +10,10 @@ namespace ArchiWindRevitAddIn.Models.Forms
         public double Latitude { get; set; } = 0.0;
         public double Longitude { get; set; } = 0.0;
         public int? RefSystem { get; set; } = null;
+
+        public bool HasBuilding { get; set; } = false;
+        public bool HasSurroundings { get; set; } = false;
+        public bool HasTerrain { get; set; } = false;
+        public bool HasVegetation { get; set; } = false;
     }
 }
