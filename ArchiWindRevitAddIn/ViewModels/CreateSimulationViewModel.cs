@@ -3,6 +3,7 @@ using ArchiWindRevitAddIn.Models;
 using ArchiWindRevitAddIn.Models.Forms;
 using ArchiWindRevitAddIn.Models.Validators;
 using ArchiWindRevitAddIn.Services;
+using ArchiWindRevitAddIn.Views.Helpers;
 using FluentValidation;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -47,11 +48,43 @@ namespace ArchiWindRevitAddIn.ViewModels
 
         public ObservableCollection<int> RefSystems { get; } = [];
 
-        public CreateSimulationViewModel()
+        public ActionCommand CreateCommand { get; set; }
+
+        private RelayCommand? loadCoordinatesFromDocument;
+        private RelayCommand? clearRefSystem;
+
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+
+        public ICommand LoadCoordinatesFromDocument => loadCoordinatesFromDocument ??= new RelayCommand(PerformLoadCoordinatesFromDocument);
+        public ICommand ClearRefSystem => clearRefSystem ??= new RelayCommand(PerformClearRefSystem);
+
+        private Document Document { get; set; }
+
+        public CreateSimulationViewModel(Document document)
         {
+            Document = document;
+
             RefSystems = new ObservableCollection<int>(Epsg.Values);
+            CreateCommand = new ActionCommand(Create, CanCreate);
 
             _ = LoadProjectsAsync();
+        }
+
+        private bool CanCreate(object? obj)
+        {
+            return !HasErrors;
+        }
+
+        private void Create(object? obj)
+        {
+            ValidateAllProperties();
+
+            if (CanCreate(obj) == false)
+            {
+                return;
+            }
+
+            throw new NotImplementedException();
         }
 
         private async Task LoadProjectsAsync()
@@ -86,12 +119,6 @@ namespace ArchiWindRevitAddIn.ViewModels
                 IsLoading = false;
             }
         }
-
-        private RelayCommand? clearRefSystem;
-
-        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
-
-        public ICommand ClearRefSystem => clearRefSystem ??= new RelayCommand(PerformClearRefSystem);
 
         private void PerformClearRefSystem()
         {
@@ -174,6 +201,8 @@ namespace ArchiWindRevitAddIn.ViewModels
             }
 
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
+
+            CreateCommand.RaiseCanExecuteChanged();
         }
 
         private void ValidateAllProperties()
@@ -192,6 +221,30 @@ namespace ArchiWindRevitAddIn.ViewModels
                 errors[error.PropertyName].Add(error.ErrorMessage);
 
                 ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(error.PropertyName));
+            }
+
+            CreateCommand.RaiseCanExecuteChanged();
+        }
+
+        private void PerformLoadCoordinatesFromDocument()
+        {
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                var coordinates = WSG84.FromDocument(Document);
+
+                if (coordinates == null)
+                {
+                    return;
+                }
+
+                Latitude = coordinates.Latitude.ToString("F6", CultureInfo.CurrentCulture);
+                Longitude = coordinates.Longitude.ToString("F6", CultureInfo.CurrentCulture);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
             }
         }
     }
