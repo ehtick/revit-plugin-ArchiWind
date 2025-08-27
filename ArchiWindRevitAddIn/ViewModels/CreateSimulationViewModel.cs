@@ -4,7 +4,7 @@ using ArchiWindRevitAddIn.Models.Forms;
 using ArchiWindRevitAddIn.Models.Validators;
 using ArchiWindRevitAddIn.Services;
 using ArchiWindRevitAddIn.Views;
-using ArchiWindRevitAddIn.Views.Helpers;
+using Autodesk.Revit.UI;
 using FluentValidation;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -19,7 +19,7 @@ namespace ArchiWindRevitAddIn.ViewModels
         private readonly CreateSimulationFormValidator validator = new();
         private readonly CreateSimulationForm simParams = new();
 
-        private Dictionary<string, List<string>> errors = new();
+        private readonly Dictionary<string, List<string>> errors = [];
 
         [ObservableProperty]
         private bool isLoading = false;
@@ -58,7 +58,7 @@ namespace ArchiWindRevitAddIn.ViewModels
         private bool hasVegetation = false;
 
         [ObservableProperty]
-        public string geometriesStatus = "";
+        public string geometriesStatus = string.Empty;
 
         [ObservableProperty]
         private bool isBuildingEnabled;
@@ -72,49 +72,48 @@ namespace ArchiWindRevitAddIn.ViewModels
         [ObservableProperty]
         private bool isVegetationEnabled;
 
-        public Visibility GeometriesStatusVisibility => GeometriesStatus.Length > 0 ? Visibility.Visible : Visibility.Invisible;
+        public System.Windows.Visibility GeometriesStatusVisibility =>
+            GeometriesStatus.Length > 0 ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
 
         public ObservableCollection<ProjectV1> Projects { get; } = [];
 
         public ObservableCollection<int> RefSystems { get; } = [];
 
-        public ActionCommand CreateCommand { get; set; }
-
-        private RelayCommand? loadCoordinatesFromDocument;
-        private RelayCommand? clearRefSystem;
+        public RelayCommand CreateCommand { get; set; }
+        public RelayCommand LoadCoordinatesFromDocument { get; set; }
+        public RelayCommand ClearRefSystem { get; set; }
 
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
-
-        public ICommand LoadCoordinatesFromDocument => loadCoordinatesFromDocument ??= new RelayCommand(PerformLoadCoordinatesFromDocument);
-        public ICommand ClearRefSystem => clearRefSystem ??= new RelayCommand(PerformClearRefSystem);
 
         private Document Document { get; set; }
 
         public CreateSimulationViewModel(Document document)
         {
-            Document = document;
+            CreateCommand = new(Create, CanCreate);
+            LoadCoordinatesFromDocument = new(PerformLoadCoordinatesFromDocument);
+            ClearRefSystem = new(PerformClearRefSystem);
 
-            RefSystems = new ObservableCollection<int>(Epsg.Values);
-            CreateCommand = new ActionCommand(Create, CanCreate);
+            Document = document;
+            Name = document.Title;
 
             _ = LoadProjectsAsync();
 
-            Name = document.Title;
-            PerformLoadCoordinatesFromDocument();
+            RefSystems = new(Epsg.Values);
 
+            PerformLoadCoordinatesFromDocument();
             UpdateGeometriesControls();
         }
 
-        private bool CanCreate(object? obj)
+        private bool CanCreate()
         {
             return !HasErrors;
         }
 
-        private void Create(object? obj)
+        private void Create()
         {
             ValidateAllProperties();
 
-            if (CanCreate(obj) == false)
+            if (CanCreate() == false)
             {
                 return;
             }
@@ -126,11 +125,10 @@ namespace ArchiWindRevitAddIn.ViewModels
         {
             try
             {
-                IsLoading = true;
-                //Status = "Loading projects...";
+                Mouse.OverrideCursor = Cursors.Wait;
 
-                var client = ServiceLocator.ApiClient;
-                var response = await client.V1.Projects.GetAsProjectsGetResponseAsync();
+                var response = await ServiceLocator.ApiClient.V1.Projects.GetAsProjectsGetResponseAsync();
+
                 Projects.Clear();
 
                 if (response?.Items != null)
@@ -141,17 +139,18 @@ namespace ArchiWindRevitAddIn.ViewModels
                     }
                 }
 
-                SelectedProject = Projects.FirstOrDefault();
-
-                //Status = null;
+                SelectedProject = Projects.Count > 0 ? Projects.First() : null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Status = $"Failed to load projects! {ex.Message}";
+                TaskDialog.Show("Error",
+                                $"An error occured, please report to the developer: \n\n{ex.GetType()}\n{ex.Message}",
+                                TaskDialogCommonButtons.Ok,
+                                TaskDialogResult.Ok);
             }
             finally
             {
-                IsLoading = false;
+                Mouse.OverrideCursor = null;
             }
         }
 
@@ -271,7 +270,7 @@ namespace ArchiWindRevitAddIn.ViewModels
 
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
 
-            CreateCommand.RaiseCanExecuteChanged();
+            CreateCommand.NotifyCanExecuteChanged();
         }
 
         private void ValidateAllProperties()
@@ -292,7 +291,7 @@ namespace ArchiWindRevitAddIn.ViewModels
                 ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(error.PropertyName));
             }
 
-            CreateCommand.RaiseCanExecuteChanged();
+            CreateCommand.NotifyCanExecuteChanged();
         }
 
         private void PerformLoadCoordinatesFromDocument()

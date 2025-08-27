@@ -23,6 +23,18 @@ namespace ArchiWindRevitAddIn.Services
             return SecureRetrieve(REGISTRY_KEY, REGISTRY_KEY_PAT);
         }
 
+        public static void DeletePAT()
+        {
+            using var key = Registry.CurrentUser.CreateSubKey(REGISTRY_KEY);
+
+            if (key is null)
+            {
+                return;
+            }
+
+            key.DeleteValue(REGISTRY_KEY_PAT);
+        }
+
         private static void SecureStore(string keyPath, string value, SecureString token)
         {
             var encryptedToken = ProtectSecureString(token, pepper);

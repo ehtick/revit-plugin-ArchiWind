@@ -27,6 +27,8 @@ namespace ArchiWindRevitAddIn.ViewModels
 
         public AsyncRelayCommand ConfirmCommand { get; set; }
 
+        public RelayCommand ClearCommand { get; set; }
+
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
         private readonly Dictionary<string, List<string>> errors = [];
@@ -35,7 +37,8 @@ namespace ArchiWindRevitAddIn.ViewModels
 
         public AccountSettingsViewModel()
         {
-            ConfirmCommand = new AsyncRelayCommand(Confirm, CanConfirm);
+            ConfirmCommand = new(Confirm, CanConfirm);
+            ClearCommand = new(Clear);
 
             if (ConfigurationService.RetrievePAT() is SecureString pat)
             {
@@ -45,6 +48,13 @@ namespace ArchiWindRevitAddIn.ViewModels
             }
 
             ValidateAllProperties();
+        }
+
+        private void Clear()
+        {
+            Pat = new SecureString();
+            ConfigurationService.DeletePAT();
+            AccountDetailsVisibility = System.Windows.Visibility.Hidden;
         }
 
         public IEnumerable GetErrors(string? propertyName)
@@ -131,7 +141,24 @@ namespace ArchiWindRevitAddIn.ViewModels
                 }
 
                 AccountDetailsVisibility = System.Windows.Visibility.Visible;
-                AccountDetails = $"{user.Email}";
+
+                AccountDetails = $"Email: {user.Email}";
+
+                if (user.FullName is not null)
+                {
+                    AccountDetails += $"\nFull name: {user.FullName}";
+                }
+
+                AccountDetails += "\n";
+
+                if (user.BillingPlan is null)
+                {
+                    AccountDetails += "\nNo billing plan.";
+                }
+                else
+                {
+                    AccountDetails += $"\nBilling plan: {user.BillingPlan.Name} ({user.BillingPlan.State})";
+                }
             }
             catch (Exception ex)
             {
