@@ -1,4 +1,5 @@
 ﻿using ArchiWindRevitAddIn.ViewModels;
+using Autodesk.Revit.UI;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Navigation;
@@ -25,8 +26,10 @@ namespace ArchiWindRevitAddIn.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Unable to open link: {ex.Message}", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                TaskDialog.Show("Error",
+                                $"Unable to open link: {ex.Message}",
+                                TaskDialogCommonButtons.Ok,
+                                TaskDialogResult.Ok);
             }
             finally
             {

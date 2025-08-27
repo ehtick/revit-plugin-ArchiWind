@@ -24,13 +24,19 @@ namespace ArchiWindRevitAddIn
 
         private void CreateRibbon()
         {
-            var commandsPanel = Application.CreatePanel("Simulations", TAB_NAME);
+            var viewsPanel = Application.CreatePanel("3D Views", TAB_NAME);
 
-            commandsPanel.AddPushButton<Commands.CreateSimulation>("Create")
+            viewsPanel.AddPushButton<Commands.PreviewGeometries>("Preview")
                 .SetImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon16.png")
                 .SetLargeImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon32.png");
 
-            commandsPanel.AddPushButton<Commands.PreviewGeometries>("Preview")
+            viewsPanel.AddPushButton<Commands.ExportStls>("Export STLs")
+                .SetImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon16.png")
+                .SetLargeImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon32.png");
+
+            var commandsPanel = Application.CreatePanel("Simulation", TAB_NAME);
+
+            commandsPanel.AddPushButton<Commands.CreateSimulation>("Create")
                 .SetImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon16.png")
                 .SetLargeImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon32.png");
 
@@ -41,7 +47,7 @@ namespace ArchiWindRevitAddIn
                 .SetLargeImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon32.png");
         }
 
-        private void InitialiseServices()
+        private static void InitialiseServices()
         {
             try
             {

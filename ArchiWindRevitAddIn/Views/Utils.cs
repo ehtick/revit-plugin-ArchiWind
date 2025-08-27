@@ -2,6 +2,8 @@
 using System.Runtime.InteropServices;
 using System.Security;
 
+using View = Autodesk.Revit.DB.View;
+
 namespace ArchiWindRevitAddIn.Views
 {
     internal class Utils
@@ -97,6 +99,23 @@ namespace ArchiWindRevitAddIn.Views
             {
                 Marshal.ZeroFreeBSTR(ptr);
             }
+        }
+
+        public static void ExportViewAsStl(Document doc, ElementId viewId, string folder, string filename)
+        {
+            STLExportOptions exportOptions = new()
+            {
+                TargetUnit = ExportUnit.Meter,
+                ExportBinary = true,
+                ExportColor = false,
+                ViewId = viewId,
+            };
+
+#if REVIT2023_OR_GREATER
+            exportOptions.SetTessellationSettings(ExportResolution.Medium);
+#endif
+
+            doc.Export(folder, filename, exportOptions);
         }
 
         private static View3D DuplicateThreeDView(Document doc, View threeDView)

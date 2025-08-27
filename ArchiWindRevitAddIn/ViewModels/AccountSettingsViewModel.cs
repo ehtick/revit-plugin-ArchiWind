@@ -9,6 +9,8 @@ using System.Diagnostics;
 using System.Security;
 using System.Windows.Input;
 
+using Cursors = System.Windows.Input.Cursors;
+
 namespace ArchiWindRevitAddIn.ViewModels
 {
     public sealed partial class AccountSettingsViewModel : ObservableObject, INotifyDataErrorInfo
