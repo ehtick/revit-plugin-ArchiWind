@@ -1,16 +1,16 @@
 using ArchiwindRevitAddIn.Api;
+using ArchiWindRevitAddIn.Views;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
+using System.Security;
 
 namespace ArchiWindRevitAddIn.Services
 {
     public static class ServiceLocator
     {
-        private static readonly string BASE_URL = "https://api.nablaflow.io/archiwind";
-
         private static HttpClient? _apiClient;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static HttpClient ApiClient
         {
@@ -36,49 +36,27 @@ namespace ArchiWindRevitAddIn.Services
             }
         }
 
-        private static HttpClient CreateApiClient()
+        public static HttpClient CreateApiClient(SecureString? pat = null)
         {
-            return CreateApiClient(GetApiKey(), GetBaseUrl());
+            return CreateApiClient(pat, GetBaseUrl());
         }
 
-        private static HttpClient CreateApiClient(string? apiKey, string baseUrl)
+        private static HttpClient CreateApiClient(SecureString? pat, string? baseUrl)
         {
-            var authProvider = CreateAuthenticationProvider(apiKey);
+            var authProvider = new PersonalAccessTokenAuthenticationProvider(pat);
 
             var requestAdapter = new HttpClientRequestAdapter(authProvider);
-            requestAdapter.BaseUrl = baseUrl;
+            if (baseUrl != null)
+            {
+                requestAdapter.BaseUrl = baseUrl;
+            }
 
             return new HttpClient(requestAdapter);
         }
 
-        private static string GetBaseUrl()
+        private static string? GetBaseUrl()
         {
-            return Environment.GetEnvironmentVariable("ARCHIWIND_BASEURL") ?? BASE_URL;
-        }
-
-        private static IAuthenticationProvider CreateAuthenticationProvider(string? apiKey = null)
-        {
-            if (!string.IsNullOrEmpty(apiKey))
-            {
-                return new ApiKeyAuthenticationProvider(apiKey!);
-            }
-
-            return new AnonymousAuthenticationProvider();
-        }
-
-        private static string? GetApiKey()
-        {
-            return GetApiKeyFromSettings() ?? GetApiKeyFromEnvironment();
-        }
-
-        private static string? GetApiKeyFromSettings()
-        {
-            return ConfigurationService.GetApiKey();
-        }
-
-        private static string? GetApiKeyFromEnvironment()
-        {
-            return Environment.GetEnvironmentVariable("ARCHIWIND_PAT");
+            return Environment.GetEnvironmentVariable("ARCHIWIND_BASEURL");
         }
 
         public static void Dispose()
@@ -90,27 +68,26 @@ namespace ArchiWindRevitAddIn.Services
         }
     }
 
-    public class ApiKeyAuthenticationProvider : IAuthenticationProvider
+    public class PersonalAccessTokenAuthenticationProvider : IAuthenticationProvider
     {
-        private readonly string _apiKey;
+        private readonly SecureString? pat;
 
-        public ApiKeyAuthenticationProvider(string apiKey)
+        public PersonalAccessTokenAuthenticationProvider(SecureString? pat = null)
         {
-            _apiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
+            this.pat = pat;
         }
 
         public Task AuthenticateRequestAsync(RequestInformation request, Dictionary<string, object>? additionalAuthenticationContext = null, CancellationToken cancellationToken = default)
         {
-            request.Headers.TryAdd("x-nablaflow-token", _apiKey);
+            var pat = this.pat ?? ConfigurationService.RetrievePAT();
 
-            return Task.CompletedTask;
-        }
-    }
+            if (pat == null)
+            {
+                return Task.FromException(new InvalidOperationException("no PAT configured"));
+            }
 
-    public class AnonymousAuthenticationProvider : IAuthenticationProvider
-    {
-        public Task AuthenticateRequestAsync(RequestInformation request, Dictionary<string, object>? additionalAuthenticationContext = null, CancellationToken cancellationToken = default)
-        {
+            request.Headers.TryAdd("x-nablaflow-token", Utils.ConvertSecureStringToString(pat));
+
             return Task.CompletedTask;
         }
     }

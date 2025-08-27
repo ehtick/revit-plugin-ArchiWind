@@ -1,4 +1,6 @@
 ﻿using System.Collections.Immutable;
+using System.Runtime.InteropServices;
+using System.Security;
 
 namespace ArchiWindRevitAddIn.Views
 {
@@ -76,6 +78,25 @@ namespace ArchiWindRevitAddIn.Views
             view.DisplayStyle = DisplayStyle.Shading;
 
             return view;
+        }
+
+        public static string ConvertSecureStringToString(SecureString secureString)
+        {
+            if (secureString == null || secureString.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            IntPtr ptr = Marshal.SecureStringToBSTR(secureString);
+
+            try
+            {
+                return Marshal.PtrToStringBSTR(ptr);
+            }
+            finally
+            {
+                Marshal.ZeroFreeBSTR(ptr);
+            }
         }
 
         private static View3D DuplicateThreeDView(Document doc, View threeDView)

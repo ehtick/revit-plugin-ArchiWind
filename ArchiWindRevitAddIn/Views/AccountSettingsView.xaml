@@ -3,9 +3,90 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ArchiWindRevitAddIn.Views" xmlns:viewModel="clr-namespace:ArchiWindRevitAddIn.ViewModels"
+        xmlns:local="clr-namespace:ArchiWindRevitAddIn.Views"
+        xmlns:viewModel="clr-namespace:ArchiWindRevitAddIn.ViewModels"
+        xmlns:helper="clr-namespace:ArchiWindRevitAddIn.Views.Helpers"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewModel:AccountSettingsViewModel}"
-        Title="Account Settings - ArchiWind" Height="450" Width="800">
-    <Grid/>
+        Icon="/ArchiWindRevitAddIn;component/Resources/Icons/icon.ico"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Height="Auto"
+        Width="500"
+        SizeToContent="Height"
+        Title="Account Settings - ArchiWind">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="20,10,20,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Image Grid.Column="0" HorizontalAlignment="Left" Source="/ArchiWindRevitAddIn;component/Resources/Images/logo.png" />
+
+            <TextBlock Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                <Hyperlink NavigateUri="https://nablaflow.io/archiwind" RequestNavigate="OpenLink">
+                    https://nablaflow.io/archiwind
+                </Hyperlink>
+            </TextBlock>
+        </Grid>
+            
+        <GroupBox Name="API_Access" Grid.Row="1" Header="API Access">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Margin="5" LineHeight="18">
+                    In order to use ArchiWind, you have to
+                    <Hyperlink NavigateUri="https://account.nablaflow.io/registration" RequestNavigate="OpenLink">
+                        register and activate an account.
+                    </Hyperlink>
+                    
+                    <LineBreak/>
+                    
+                    Then you can 
+                    <Hyperlink NavigateUri="https://account.nablaflow.io/developer/api" RequestNavigate="OpenLink">
+                        generate your API Personal Access Token
+                    </Hyperlink>
+                    and enter it here.
+                </TextBlock>
+
+                <Grid Grid.Row="1" Margin="0,10,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0" Grid.Row="1" Content="Token:" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    
+                    <PasswordBox Name="Pat" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" MinHeight="25"
+                        helper:SecurePasswordBox.Attach="True" 
+                        helper:SecurePasswordBox.SecurePassword="{Binding Pat, Mode=TwoWay}"
+                        ToolTip="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={RelativeSource Self}}" />
+                </Grid>
+
+                <Button Grid.Row="2" HorizontalAlignment="Right" Content="Confirm" MinWidth="80" Margin="0,10,0,0" Command="{Binding ConfirmCommand}"/>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Name="Account" Grid.Row="2" Header="Account" Visibility="{Binding AccountDetailsVisibility}">
+            <TextBlock Margin="5" LineHeight="18" Text="{Binding AccountDetails}" />
+        </GroupBox>
+
+        <Button Grid.Row="3" HorizontalAlignment="Right" Content="Close" MinWidth="80" Margin="0,5,5,5" IsCancel="True" Visibility="{Binding AccountDetailsVisibility}" />
+    </Grid>
 </Window>
