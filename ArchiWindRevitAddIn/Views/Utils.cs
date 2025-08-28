@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Security;
 
 using View = Autodesk.Revit.DB.View;
@@ -13,7 +12,7 @@ namespace ArchiWindRevitAddIn.Views
         public const string TERRAIN_VIEW = "ArchiWind - Terrain";
         public const string VEGETATION_VIEW = "ArchiWind - Vegetation";
 
-        public static int CountElementsInView(Document doc, View3D view, ImmutableHashSet<BuiltInCategory> categories)
+        public static int CountElementsInView(Document doc, View3D view, HashSet<BuiltInCategory> categories)
         {
             return categories.Select(cat =>
             {
@@ -24,7 +23,7 @@ namespace ArchiWindRevitAddIn.Views
             }).Sum();
         }
 
-        public static void OnlyShowCategories(Document doc, View3D view, ImmutableHashSet<BuiltInCategory> showCategories)
+        public static void OnlyShowCategories(Document doc, View3D view, HashSet<BuiltInCategory> showCategories)
         {
             foreach (Category cat in doc.Settings.Categories)
             {

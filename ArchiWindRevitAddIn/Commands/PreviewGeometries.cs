@@ -68,21 +68,6 @@ namespace ArchiWindRevitAddIn.Commands
 
                 return;
             }
-
-            //ProjectLocation loc = currentDocument.ActiveProjectLocation;
-
-            //var terrainView = this.ActiveView.Duplicate(ViewDuplicateOption.Duplicate);
-            //new FilteredElementCollector(currentDocument, terrainView).
-
-            //STLExportOptions exportOptions = new STLExportOptions();
-            //exportOptions.TargetUnit = ExportUnit.Meter;
-            //exportOptions.SetTessellationSettings(ExportResolution.Coarse);
-            //exportOptions.ExportBinary = true;
-
-            //CustomExporter customExporter = new CustomExporter(currentDocument, new TerrainExportContext());
-            //customExporter.Export(this.ActiveView);
-
-            //currentDocument.Export("C:\\Users\\your mom\\Desktop", "terrain.stl", exportOptions);
         }
     }
 }

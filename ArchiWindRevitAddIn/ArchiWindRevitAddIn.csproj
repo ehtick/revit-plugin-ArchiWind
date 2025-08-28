@@ -72,7 +72,6 @@
 
         <!-- MVVM -->
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-        <PackageReference Include="System.Collections.Immutable" Version="9.0.8" />
         <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.8" />
     </ItemGroup>
 
