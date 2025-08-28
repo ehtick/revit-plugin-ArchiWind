@@ -1,4 +1,5 @@
 using Microsoft.Win32;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
@@ -117,6 +118,11 @@ namespace ArchiWindRevitAddIn.Services
                     entropy,
                     DataProtectionScope.CurrentUser
                 );
+
+                if (decryptedBytes.Length % 2 != 0)
+                {
+                    throw new InvalidDataException("Decrypted data length must be even for UTF-16");
+                }
 
                 var secureString = new SecureString();
 
