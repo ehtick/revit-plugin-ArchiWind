@@ -84,6 +84,9 @@ namespace ArchiWindRevitAddIn.ViewModels
         public RelayCommand CreateCommand { get; set; }
         public RelayCommand LoadCoordinatesFromDocument { get; set; }
         public RelayCommand ClearRefSystem { get; set; }
+        public RelayCommand DoUpdateGeometriesControls { get; set; }
+
+        public AsyncRelayCommand LoadProjects { get; set; }
 
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
@@ -94,16 +97,13 @@ namespace ArchiWindRevitAddIn.ViewModels
             CreateCommand = new(Create, CanCreate);
             LoadCoordinatesFromDocument = new(PerformLoadCoordinatesFromDocument);
             ClearRefSystem = new(PerformClearRefSystem);
+            LoadProjects = new(PerformLoadProjects);
+            DoUpdateGeometriesControls = new(UpdateGeometriesControls);
 
             Document = document;
             Name = document.Title;
 
-            _ = LoadProjectsAsync();
-
             RefSystems = new(Epsg.Values);
-
-            PerformLoadCoordinatesFromDocument();
-            UpdateGeometriesControls();
         }
 
         private bool CanCreate()
@@ -123,7 +123,7 @@ namespace ArchiWindRevitAddIn.ViewModels
             throw new NotImplementedException();
         }
 
-        private async Task LoadProjectsAsync()
+        private async Task PerformLoadProjects()
         {
             try
             {

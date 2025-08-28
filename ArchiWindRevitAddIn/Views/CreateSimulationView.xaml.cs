@@ -9,10 +9,6 @@ namespace ArchiWindRevitAddIn.Views
         {
             DataContext = viewModel;
             InitializeComponent();
-
-            //Validation.AddErrorHandler(this, OnValidationError);
         }
-
-
     }
 }

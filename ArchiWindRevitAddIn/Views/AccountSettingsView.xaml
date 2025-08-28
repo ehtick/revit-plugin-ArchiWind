@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:ArchiWindRevitAddIn.Views"
         xmlns:viewModel="clr-namespace:ArchiWindRevitAddIn.ViewModels"
         xmlns:helper="clr-namespace:ArchiWindRevitAddIn.Views.Helpers"
@@ -15,6 +16,12 @@
         Width="500"
         SizeToContent="Height"
         Title="Account Settings - ArchiWind">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding UpdateAccountDetails}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
@@ -37,7 +44,7 @@
                 </Hyperlink>
             </TextBlock>
         </Grid>
-            
+
         <GroupBox Name="API_Access" Grid.Row="1" Header="API Access">
             <Grid>
                 <Grid.RowDefinitions>

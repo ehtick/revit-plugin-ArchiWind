@@ -1,4 +1,5 @@
-﻿using ArchiWindRevitAddIn.Models.Forms;
+﻿using ArchiwindRevitAddIn.Api.Models;
+using ArchiWindRevitAddIn.Models.Forms;
 using ArchiWindRevitAddIn.Models.Validators;
 using ArchiWindRevitAddIn.Services;
 using Autodesk.Revit.UI;
@@ -28,6 +29,7 @@ namespace ArchiWindRevitAddIn.ViewModels
         private SecureString pat = new();
 
         public AsyncRelayCommand ConfirmCommand { get; set; }
+        public AsyncRelayCommand UpdateAccountDetails { get; set; }
 
         public RelayCommand ClearCommand { get; set; }
 
@@ -41,15 +43,12 @@ namespace ArchiWindRevitAddIn.ViewModels
         {
             ConfirmCommand = new(Confirm, CanConfirm);
             ClearCommand = new(Clear);
+            UpdateAccountDetails = new(DoUpdateAccountDetails);
 
             if (ConfigurationService.RetrievePAT() is SecureString pat)
             {
                 Pat = pat;
-
-                _ = UpdateAccountDetails();
             }
-
-            ValidateAllProperties();
         }
 
         private void Clear()
@@ -112,7 +111,7 @@ namespace ArchiWindRevitAddIn.ViewModels
                 ConfigurationService.StorePAT(Pat);
                 ServiceLocator.Initialize();
 
-                await UpdateAccountDetails();
+                await DoUpdateAccountDetails();
             }
             catch (Exception ex)
             {
@@ -127,7 +126,7 @@ namespace ArchiWindRevitAddIn.ViewModels
             }
         }
 
-        private async Task UpdateAccountDetails()
+        private async Task DoUpdateAccountDetails()
         {
             try
             {
@@ -161,6 +160,10 @@ namespace ArchiWindRevitAddIn.ViewModels
                 {
                     AccountDetails += $"\nBilling plan: {user.BillingPlan.Name} ({user.BillingPlan.State})";
                 }
+            }
+            catch (JsonErrorResponse)
+            {
+                return;
             }
             catch (Exception ex)
             {
