@@ -9,6 +9,24 @@ namespace ArchiWindRevitAddIn.Views
         {
             DataContext = viewModel;
             InitializeComponent();
+
+            //viewModel.RequestClose += OnRequestClose;
         }
+
+        //private void OnRequestClose(bool success)
+        //{
+        //    DialogResult = success;
+        //    Close();
+        //}
+
+        //protected override void OnClosed(EventArgs e)
+        //{
+        //    // Clean up the event subscription to prevent memory leaks
+        //    if (DataContext is CreateSimulationViewModel viewModel)
+        //    {
+        //        viewModel.RequestClose -= OnRequestClose;
+        //    }
+        //    base.OnClosed(e);
+        //}
     }
 }

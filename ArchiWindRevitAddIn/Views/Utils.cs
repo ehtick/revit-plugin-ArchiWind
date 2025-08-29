@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using ArchiWindRevitAddIn.Exceptions;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Security;
 
 using View = Autodesk.Revit.DB.View;
@@ -12,15 +14,11 @@ namespace ArchiWindRevitAddIn.Views
         public const string TERRAIN_VIEW = "ArchiWind - Terrain";
         public const string VEGETATION_VIEW = "ArchiWind - Vegetation";
 
-        public static int CountElementsInView(Document doc, View3D view, HashSet<BuiltInCategory> categories)
+        public static int ShownElementsCount(Document doc, View3D view)
         {
-            return categories.Select(cat =>
-            {
-                return new FilteredElementCollector(doc, view.Id)
-                .OfCategory(cat)
+            return new FilteredElementCollector(doc, view.Id)
                 .WhereElementIsNotElementType()
                 .GetElementCount();
-            }).Sum();
         }
 
         public static void OnlyShowCategories(Document doc, View3D view, HashSet<BuiltInCategory> showCategories)
@@ -100,7 +98,7 @@ namespace ArchiWindRevitAddIn.Views
             }
         }
 
-        public static void ExportViewAsStl(Document doc, ElementId viewId, string folder, string filename)
+        public static string ExportViewAsStl(Document doc, ElementId viewId, string folder, string filename)
         {
             STLExportOptions exportOptions = new()
             {
@@ -114,7 +112,29 @@ namespace ArchiWindRevitAddIn.Views
             exportOptions.SetTessellationSettings(ExportResolution.Medium);
 #endif
 
-            doc.Export(folder, filename, exportOptions);
+            var result = doc.Export(folder, filename, exportOptions);
+
+            if (result == false)
+            {
+                throw new StlExportFailed("");
+            }
+
+            return Path.Combine(folder, filename);
+        }
+
+        public static string BytesToString(long byteCount)
+        {
+            string[] suf = ["B", "KB", "MB", "GB", "TB", "PB", "EB"];
+            if (byteCount == 0)
+            {
+                return "0" + suf[0];
+            }
+
+            long bytes = Math.Abs(byteCount);
+            int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+            double num = Math.Round(bytes / Math.Pow(1024, place), 1);
+
+            return (Math.Sign(byteCount) * num).ToString() + suf[place];
         }
 
         private static View3D DuplicateThreeDView(Document doc, View threeDView)

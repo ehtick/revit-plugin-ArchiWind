@@ -134,7 +134,7 @@ namespace ArchiWindRevitAddIn.ViewModels
 
                 Debug.WriteLine("fetching user");
                 var user = await ServiceLocator.ApiClient.Users.Self.GetAsync();
-                Debug.WriteLine($"user: ${user}");
+                Debug.WriteLine($"user: {user}");
 
                 if (user is null)
                 {
@@ -168,7 +168,7 @@ namespace ArchiWindRevitAddIn.ViewModels
             catch (Exception ex)
             {
                 AccountDetailsVisibility = System.Windows.Visibility.Visible;
-                AccountDetails = $"Something went wrong: ${ex.Message}";
+                AccountDetails = $"Something went wrong: {ex.Message}";
             }
             finally
             {

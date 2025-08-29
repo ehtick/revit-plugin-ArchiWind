@@ -1,4 +1,5 @@
 ﻿using ArchiwindRevitAddIn.Api.Models;
+using ArchiWindRevitAddIn.ExternalEventHandlers;
 using ArchiWindRevitAddIn.Models;
 using ArchiWindRevitAddIn.Models.Forms;
 using ArchiWindRevitAddIn.Models.Validators;
@@ -24,10 +25,10 @@ namespace ArchiWindRevitAddIn.ViewModels
         private readonly Dictionary<string, List<string>> errors = [];
 
         [ObservableProperty]
-        private bool isLoading = false;
+        private ProjectV1? selectedProject;
 
         [ObservableProperty]
-        private ProjectV1? selectedProject;
+        private bool isProjectSelectionEnabled = false;
 
         [ObservableProperty]
         private string name = string.Empty;
@@ -48,19 +49,19 @@ namespace ArchiWindRevitAddIn.ViewModels
         private int? selectedRefSystem;
 
         [ObservableProperty]
-        private bool hasBuilding = false;
+        private bool hasBuilding = true;
 
         [ObservableProperty]
-        private bool hasSurroundings = false;
+        private bool hasSurroundings = true;
 
         [ObservableProperty]
-        private bool hasTerrain = false;
+        private bool hasTerrain = true;
 
         [ObservableProperty]
-        private bool hasVegetation = false;
+        private bool hasVegetation = true;
 
         [ObservableProperty]
-        public string geometriesStatus = string.Empty;
+        public bool areViewGeometriesLoaded = false;
 
         [ObservableProperty]
         private bool isBuildingEnabled;
@@ -74,8 +75,17 @@ namespace ArchiWindRevitAddIn.ViewModels
         [ObservableProperty]
         private bool isVegetationEnabled;
 
-        public System.Windows.Visibility GeometriesStatusVisibility =>
-            GeometriesStatus.Length > 0 ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+        [ObservableProperty]
+        private string buildingViewStatus = string.Empty;
+
+        [ObservableProperty]
+        private string surroundingsViewStatus = string.Empty;
+
+        [ObservableProperty]
+        private string terrainViewStatus = string.Empty;
+
+        [ObservableProperty]
+        private string vegetationViewStatus = string.Empty;
 
         public ObservableCollection<ProjectV1> Projects { get; } = [];
 
@@ -92,6 +102,9 @@ namespace ArchiWindRevitAddIn.ViewModels
 
         private Document Document { get; set; }
 
+        private readonly STLExportHandler stlExportHandler = new();
+        private readonly ExternalEvent stlExportEvent;
+
         public CreateSimulationViewModel(Document document)
         {
             CreateCommand = new(Create, CanCreate);
@@ -104,6 +117,8 @@ namespace ArchiWindRevitAddIn.ViewModels
             Name = document.Title;
 
             RefSystems = new(Epsg.Values);
+
+            stlExportEvent = ExternalEvent.Create(stlExportHandler);
         }
 
         private bool CanCreate()
@@ -120,7 +135,9 @@ namespace ArchiWindRevitAddIn.ViewModels
                 return;
             }
 
-            throw new NotImplementedException();
+            var progressViewModel = new CreateSimulationProgressViewModel(Document, simParams, stlExportHandler, stlExportEvent);
+            var progressWindow = new CreateSimulationProgressView(progressViewModel);
+            progressWindow.Show();
         }
 
         private async Task PerformLoadProjects()
@@ -142,6 +159,11 @@ namespace ArchiWindRevitAddIn.ViewModels
                 }
 
                 SelectedProject = Projects.Count > 0 ? Projects.First() : null;
+
+                if (SelectedProject != null)
+                {
+                    IsProjectSelectionEnabled = true;
+                }
             }
             catch (Exception ex)
             {
@@ -320,15 +342,69 @@ namespace ArchiWindRevitAddIn.ViewModels
 
         private void UpdateGeometriesControls()
         {
-            IsBuildingEnabled = Utils.FindView(Document, Utils.BUILDING_VIEW) != null;
-            AreSurroundingsEnabled = Utils.FindView(Document, Utils.SURROUNDINGS_VIEW) != null;
-            IsTerrainEnabled = Utils.FindView(Document, Utils.TERRAIN_VIEW) != null;
-            IsVegetationEnabled = Utils.FindView(Document, Utils.VEGETATION_VIEW) != null;
+            AreViewGeometriesLoaded = false;
 
-            if (!(IsBuildingEnabled || AreSurroundingsEnabled || IsVegetationEnabled || IsTerrainEnabled))
+            UpdateGeometryControl(
+                Utils.BUILDING_VIEW,
+                flag => { HasBuilding = flag; OnHasBuildingChanged(flag); },
+                flag => IsBuildingEnabled = flag,
+                s => BuildingViewStatus = s
+            );
+
+            UpdateGeometryControl(
+                 Utils.SURROUNDINGS_VIEW,
+                 flag => { HasSurroundings = flag; OnHasSurroundingsChanged(flag); },
+                 flag => AreSurroundingsEnabled = flag,
+                 s => SurroundingsViewStatus = s
+            );
+
+            UpdateGeometryControl(
+                 Utils.TERRAIN_VIEW,
+                 flag => { HasTerrain = flag; OnHasTerrainChanged(flag); },
+                 flag => IsTerrainEnabled = flag,
+                 s => TerrainViewStatus = s
+            );
+
+            UpdateGeometryControl(
+                 Utils.VEGETATION_VIEW,
+                 flag => { HasVegetation = flag; OnHasVegetationChanged(flag); },
+                 flag => IsVegetationEnabled = flag,
+                 s => VegetationViewStatus = s
+            );
+
+            if (!(HasBuilding || HasSurroundings || HasTerrain))
             {
-                GeometriesStatus = "One or more preview view is missing.";
+                TaskDialog.Show("Error",
+                                "At least one of building, surroundings or terrain has to be present.",
+                                TaskDialogCommonButtons.Ok,
+                                TaskDialogResult.Ok);
             }
+
+            AreViewGeometriesLoaded = true;
+        }
+
+        private void UpdateGeometryControl(string viewName, Action<bool> hasGeometry, Action<bool> isEnabled, Action<string> status)
+        {
+            if (Utils.FindView(Document, viewName) is not View3D view)
+            {
+                isEnabled(false);
+                hasGeometry(false);
+                status("View is missing");
+                return;
+            }
+
+            var elementsInView = Utils.ShownElementsCount(Document, view);
+
+            if (elementsInView == 0)
+            {
+                isEnabled(false);
+                hasGeometry(false);
+                status("View is empty");
+            }
+
+            isEnabled(true);
+            hasGeometry(true);
+            status($"{elementsInView} element{(elementsInView > 1 ? "s" : "")}");
         }
     }
 }

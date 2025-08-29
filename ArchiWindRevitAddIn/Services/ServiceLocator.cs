@@ -3,6 +3,7 @@ using ArchiWindRevitAddIn.Views;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
+using Microsoft.Kiota.Http.HttpClientLibrary.Middleware;
 using System.Security;
 
 namespace ArchiWindRevitAddIn.Services
@@ -43,9 +44,30 @@ namespace ArchiWindRevitAddIn.Services
 
         private static HttpClient CreateApiClient(SecureString? pat, string? baseUrl)
         {
+            var httpClient = KiotaClientFactory.Create(
+                finalHandler: new System.Net.Http.HttpClientHandler(),
+                handlers: [
+                    new BodyInspectionHandler(new()
+                    {
+                        InspectRequestBody = true,
+                        InspectResponseBody = true,
+                    }),
+                    new RetryHandler(new()
+                    {
+                        RetriesTimeLimit = TimeSpan.FromSeconds(30),
+                    }),
+                    new UserAgentHandler(new()
+                    {
+                        Enabled = true,
+                        ProductName = "revit-plugin",
+                    }),
+                ]
+            );
+
             var authProvider = new PersonalAccessTokenAuthenticationProvider(pat);
 
-            var requestAdapter = new HttpClientRequestAdapter(authProvider);
+            var requestAdapter = new HttpClientRequestAdapter(authProvider, httpClient: httpClient);
+
             if (baseUrl != null)
             {
                 requestAdapter.BaseUrl = baseUrl;

@@ -26,7 +26,7 @@ namespace ArchiWindRevitAddIn
         {
             var viewsPanel = Application.CreatePanel("3D Views", TAB_NAME);
 
-            viewsPanel.AddPushButton<Commands.PreviewGeometries>("Preview")
+            viewsPanel.AddPushButton<Commands.PreviewGeometries>("Create")
                 .SetImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon16.png")
                 .SetLargeImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon32.png");
 
