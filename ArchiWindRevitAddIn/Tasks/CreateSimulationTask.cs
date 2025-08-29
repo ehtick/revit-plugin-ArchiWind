@@ -34,7 +34,7 @@ namespace ArchiWindRevitAddIn.Tasks
 
             using var tmpdir = TempDir.Create("archiwind_");
 
-            var geometryPaths = await ExportStls(progressViewModel, doc, stlExportHandler, stlExportEvent, parameters, tmpdir.FullName, cancellationToken);
+            var geometryPaths = ExportStls(progressViewModel, doc, stlExportHandler, stlExportEvent, parameters, tmpdir.FullName, cancellationToken);
 
             var model = await CreateModel(apiClient, parameters, geometryPaths, cancellationToken);
 
@@ -130,7 +130,7 @@ namespace ArchiWindRevitAddIn.Tasks
                 ?? throw new Exception("No model returned from the API");
         }
 
-        private static async Task<GeometryPaths> ExportStls(
+        private static GeometryPaths ExportStls(
             CreateSimulationProgressViewModel progressViewModel,
             Document doc,
             STLExportHandler stlExportHandler,
@@ -147,28 +147,28 @@ namespace ArchiWindRevitAddIn.Tasks
 
             if (parameters.HasBuilding)
             {
-                buildingPath = await ExportGeometryToStl(progressViewModel, doc, Utils.BUILDING_VIEW, tmpdir, "building.stl", stlExportHandler, stlExportEvent, cancellationToken);
+                buildingPath = ExportGeometryToStl(progressViewModel, doc, Utils.BUILDING_VIEW, tmpdir, "building.stl", stlExportHandler, stlExportEvent, cancellationToken);
             }
 
             if (parameters.HasSurroundings)
             {
-                surroundingsPath = await ExportGeometryToStl(progressViewModel, doc, Utils.SURROUNDINGS_VIEW, tmpdir, "surroundings.stl", stlExportHandler, stlExportEvent, cancellationToken);
+                surroundingsPath = ExportGeometryToStl(progressViewModel, doc, Utils.SURROUNDINGS_VIEW, tmpdir, "surroundings.stl", stlExportHandler, stlExportEvent, cancellationToken);
             }
 
             if (parameters.HasTerrain)
             {
-                terrainPath = await ExportGeometryToStl(progressViewModel, doc, Utils.TERRAIN_VIEW, tmpdir, "terrain.stl", stlExportHandler, stlExportEvent, cancellationToken);
+                terrainPath = ExportGeometryToStl(progressViewModel, doc, Utils.TERRAIN_VIEW, tmpdir, "terrain.stl", stlExportHandler, stlExportEvent, cancellationToken);
             }
 
             if (parameters.HasVegetation)
             {
-                vegetationPath = await ExportGeometryToStl(progressViewModel, doc, Utils.VEGETATION_VIEW, tmpdir, "vegetation.stl", stlExportHandler, stlExportEvent, cancellationToken);
+                vegetationPath = ExportGeometryToStl(progressViewModel, doc, Utils.VEGETATION_VIEW, tmpdir, "vegetation.stl", stlExportHandler, stlExportEvent, cancellationToken);
             }
 
             return (buildingPath, surroundingsPath, terrainPath, vegetationPath);
         }
 
-        private static async Task<string> ExportGeometryToStl(
+        private static string ExportGeometryToStl(
             CreateSimulationProgressViewModel progressViewModel,
             Document doc,
             string viewName,
@@ -184,32 +184,7 @@ namespace ArchiWindRevitAddIn.Tasks
 
             var view = Utils.FindView(doc, viewName);
 
-            var exportOptions = new STLExportOptions()
-            {
-                TargetUnit = ExportUnit.Meter,
-                ExportBinary = true,
-                ExportColor = false,
-                ViewId = view!.Id,
-            };
-
-#if REVIT2023_OR_GREATER
-            exportOptions.SetTessellationSettings(ExportResolution.Medium);
-#endif
-
-            var tcs = new TaskCompletionSource<string>();
-
-            stlExportHandler.ExportParams = new()
-            {
-                Folder = tmpdir,
-                Filename = filename,
-                ExportOptions = exportOptions,
-            };
-            stlExportHandler.TaskCompletion = tcs;
-
-            stlExportEvent.Raise();
-
-            var path = await tcs.Task;
-
+            var path = Utils.ExportViewAsStl(doc, view!.Id, tmpdir, filename);
             var size = Utils.BytesToString(new FileInfo(path).Length);
             progressViewModel.Dispatcher.Invoke(() => progressViewModel.AddLogMessage($"Exported {filename}: {size}"));
 

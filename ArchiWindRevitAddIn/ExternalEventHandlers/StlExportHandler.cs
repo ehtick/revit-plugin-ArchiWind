@@ -6,9 +6,16 @@ namespace ArchiWindRevitAddIn.ExternalEventHandlers
 {
     public class STLExportParams
     {
-        public required string Folder { get; set; }
-        public required string Filename { get; set; }
-        public required STLExportOptions ExportOptions { get; set; }
+        public STLExportParams(string folder, string filename, STLExportOptions exportOptions)
+        {
+            Folder = folder;
+            Filename = filename;
+            ExportOptions = exportOptions;
+        }
+
+        public string Folder { get; private set; }
+        public string Filename { get; private set; }
+        public STLExportOptions ExportOptions { get; private set; }
     }
 
     public class STLExportHandler : IExternalEventHandler
@@ -22,21 +29,21 @@ namespace ArchiWindRevitAddIn.ExternalEventHandlers
         {
             try
             {
-                if (ExportParams is null)
+                if (ExportParams is not STLExportParams params_)
                 {
                     throw new InvalidOperationException("No ExportParams set");
                 }
 
                 Document doc = app.ActiveUIDocument.Document;
 
-                bool result = doc.Export(ExportParams.Folder, ExportParams.Filename, ExportParams.ExportOptions);
+                bool result = doc.Export(params_.Folder, params_.Filename, params_.ExportOptions);
 
                 if (result == false)
                 {
-                    throw new StlExportFailed($"Failed to export {ExportParams.Filename} because not in main thread");
+                    throw new StlExportFailed($"Failed to export {params_.Filename} because not in main thread");
                 }
 
-                TaskCompletion?.SetResult(Path.Combine(ExportParams.Folder, ExportParams.Filename));
+                TaskCompletion?.SetResult(Path.Combine(params_.Folder, params_.Filename));
             }
             catch (Exception ex)
             {

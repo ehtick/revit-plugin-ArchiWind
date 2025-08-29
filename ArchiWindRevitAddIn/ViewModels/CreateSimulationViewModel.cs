@@ -12,7 +12,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Input;
-
 using Cursors = System.Windows.Input.Cursors;
 
 namespace ArchiWindRevitAddIn.ViewModels
@@ -137,7 +136,8 @@ namespace ArchiWindRevitAddIn.ViewModels
 
             var progressViewModel = new CreateSimulationProgressViewModel(Document, simParams, stlExportHandler, stlExportEvent);
             var progressWindow = new CreateSimulationProgressView(progressViewModel);
-            progressWindow.Show();
+
+            progressWindow.ShowDialog();
         }
 
         private async Task PerformLoadProjects()

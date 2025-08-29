@@ -47,6 +47,7 @@ namespace ArchiWindRevitAddIn.Services
             var httpClient = KiotaClientFactory.Create(
                 finalHandler: new System.Net.Http.HttpClientHandler(),
                 handlers: [
+                    new IdempotencyKeyHandler(),
                     new BodyInspectionHandler(new()
                     {
                         InspectRequestBody = true,
@@ -111,6 +112,21 @@ namespace ArchiWindRevitAddIn.Services
             request.Headers.TryAdd("x-nablaflow-token", Utils.ConvertSecureStringToString(pat));
 
             return Task.CompletedTask;
+        }
+    }
+
+    public class IdempotencyKeyHandler : System.Net.Http.DelegatingHandler
+    {
+        protected override async Task<System.Net.Http.HttpResponseMessage> SendAsync(System.Net.Http.HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
+            if (request.Method == System.Net.Http.HttpMethod.Post)
+            {
+                request.Headers.Add("idempotency-key", new Guid().ToString());
+            }
+
+            return await base.SendAsync(request, cancellationToken);
         }
     }
 }
