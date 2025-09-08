@@ -27,24 +27,24 @@ namespace ArchiWindRevitAddIn
             var viewsPanel = Application.CreatePanel("3D Views", TAB_NAME);
 
             viewsPanel.AddPushButton<Commands.PreviewGeometries>("Create")
-                .SetImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon16.png")
-                .SetLargeImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon32.png");
+                .SetImage("/ArchiWindRevitAddIn;component/Resources/Icons/create-views-light@16.png")
+                .SetLargeImage("/ArchiWindRevitAddIn;component/Resources/Icons/create-views-light@32.png");
 
             viewsPanel.AddPushButton<Commands.ExportStls>("Export STLs")
-                .SetImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon16.png")
-                .SetLargeImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon32.png");
+                .SetImage("/ArchiWindRevitAddIn;component/Resources/Icons/export-stls-light@16.png")
+                .SetLargeImage("/ArchiWindRevitAddIn;component/Resources/Icons/export-stls-light@32.png");
 
             var commandsPanel = Application.CreatePanel("Simulation", TAB_NAME);
 
             commandsPanel.AddPushButton<Commands.CreateSimulation>("Create")
-                .SetImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon16.png")
-                .SetLargeImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon32.png");
+                .SetImage("/ArchiWindRevitAddIn;component/Resources/Icons/create-simulation-light@16.png")
+                .SetLargeImage("/ArchiWindRevitAddIn;component/Resources/Icons/create-simulation-light@32.png");
 
             var settingsPanel = Application.CreatePanel("Settings", TAB_NAME);
 
             settingsPanel.AddPushButton<Commands.AccountSettings>("Account")
-                .SetImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon16.png")
-                .SetLargeImage("/ArchiWindRevitAddIn;component/Resources/Icons/RibbonIcon32.png");
+                .SetImage("/ArchiWindRevitAddIn;component/Resources/Icons/user-settings-light@16.png")
+                .SetLargeImage("/ArchiWindRevitAddIn;component/Resources/Icons/user-settings-light@32.png");
         }
 
         private static void InitialiseServices()

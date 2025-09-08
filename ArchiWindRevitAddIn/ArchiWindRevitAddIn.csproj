@@ -56,6 +56,22 @@
     </PropertyGroup>
     <ItemGroup>
       <None Remove="Api\.kiota.log" />
+      <None Remove="Resources\Icons\create-simulation-dark%4016.png" />
+      <None Remove="Resources\Icons\create-simulation-dark%4032.png" />
+      <None Remove="Resources\Icons\create-simulation-light%4016.png" />
+      <None Remove="Resources\Icons\create-simulation-light%4032.png" />
+      <None Remove="Resources\Icons\create-views-dark%4016.png" />
+      <None Remove="Resources\Icons\create-views-dark%4032.png" />
+      <None Remove="Resources\Icons\create-views-light%4016.png" />
+      <None Remove="Resources\Icons\create-views-light%4032.png" />
+      <None Remove="Resources\Icons\export-stls-dark%4016.png" />
+      <None Remove="Resources\Icons\export-stls-dark%4032.png" />
+      <None Remove="Resources\Icons\export-stls-light%4016.png" />
+      <None Remove="Resources\Icons\export-stls-light%4032.png" />
+      <None Remove="Resources\Icons\user-settings-dark%4016.png" />
+      <None Remove="Resources\Icons\user-settings-dark%4032.png" />
+      <None Remove="Resources\Icons\user-settings-light%4016.png" />
+      <None Remove="Resources\Icons\user-settings-light%4032.png" />
       <None Remove="Resources\Images\logo.png" />
     </ItemGroup>
 
@@ -76,7 +92,23 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Resource Include="Resources\Icons\create-simulation-dark@16.png" />
+      <Resource Include="Resources\Icons\create-simulation-dark@32.png" />
+      <Resource Include="Resources\Icons\create-simulation-light@16.png" />
+      <Resource Include="Resources\Icons\create-simulation-light@32.png" />
+      <Resource Include="Resources\Icons\create-views-dark@16.png" />
+      <Resource Include="Resources\Icons\create-views-dark@32.png" />
+      <Resource Include="Resources\Icons\create-views-light@16.png" />
+      <Resource Include="Resources\Icons\create-views-light@32.png" />
+      <Resource Include="Resources\Icons\export-stls-dark@16.png" />
+      <Resource Include="Resources\Icons\export-stls-dark@32.png" />
+      <Resource Include="Resources\Icons\export-stls-light@16.png" />
+      <Resource Include="Resources\Icons\export-stls-light@32.png" />
       <Resource Include="Resources\Icons\icon.ico" />
+      <Resource Include="Resources\Icons\user-settings-dark@16.png" />
+      <Resource Include="Resources\Icons\user-settings-dark@32.png" />
+      <Resource Include="Resources\Icons\user-settings-light@16.png" />
+      <Resource Include="Resources\Icons\user-settings-light@32.png" />
       <Resource Include="Resources\Images\logo.png" />
     </ItemGroup>
 
