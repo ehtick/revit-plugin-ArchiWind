@@ -15,32 +15,26 @@ namespace ArchiwindRevitAddIn.Api.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>The available_credits property</summary>
-        public int? AvailableCredits { get; set; }
-        /// <summary>The ends_on property</summary>
-        public Date? EndsOn { get; set; }
-        /// <summary>The monthly_credits property</summary>
-        public int? MonthlyCredits { get; set; }
-        /// <summary>The name property</summary>
+        /// <summary>The detailed_credits property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Name { get; set; }
+        public global::ArchiwindRevitAddIn.Api.Models.BillingPlan.BillingPlan_detailed_credits? DetailedCredits { get; set; }
 #nullable restore
 #else
-        public string Name { get; set; }
+        public global::ArchiwindRevitAddIn.Api.Models.BillingPlan.BillingPlan_detailed_credits DetailedCredits { get; set; }
 #endif
-        /// <summary>The next_monthly_cycle_starts_on property</summary>
-        public Date? NextMonthlyCycleStartsOn { get; set; }
-        /// <summary>The renewal_interval property</summary>
-        public global::ArchiwindRevitAddIn.Api.Models.BillingPlan_renewal_interval? RenewalInterval { get; set; }
-        /// <summary>The renews_on property</summary>
-        public Date? RenewsOn { get; set; }
-        /// <summary>The started_on property</summary>
-        public Date? StartedOn { get; set; }
-        /// <summary>The state property</summary>
-        public global::ArchiwindRevitAddIn.Api.Models.BillingPlan_state? State { get; set; }
-        /// <summary>The suspension_reason property</summary>
-        public global::ArchiwindRevitAddIn.Api.Models.BillingPlan_suspension_reason? SuspensionReason { get; set; }
+        /// <summary>The draft_credits property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::ArchiwindRevitAddIn.Api.Models.BillingPlan.BillingPlan_draft_credits? DraftCredits { get; set; }
+#nullable restore
+#else
+        public global::ArchiwindRevitAddIn.Api.Models.BillingPlan.BillingPlan_draft_credits DraftCredits { get; set; }
+#endif
+        /// <summary>The expires_on property</summary>
+        public Date? ExpiresOn { get; set; }
+        /// <summary>The name property</summary>
+        public global::ArchiwindRevitAddIn.Api.Models.BillingPlan_name? Name { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::ArchiwindRevitAddIn.Api.Models.BillingPlan"/> and sets the default values.
         /// </summary>
@@ -66,16 +60,10 @@ namespace ArchiwindRevitAddIn.Api.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "available_credits", n => { AvailableCredits = n.GetIntValue(); } },
-                { "ends_on", n => { EndsOn = n.GetDateValue(); } },
-                { "monthly_credits", n => { MonthlyCredits = n.GetIntValue(); } },
-                { "name", n => { Name = n.GetStringValue(); } },
-                { "next_monthly_cycle_starts_on", n => { NextMonthlyCycleStartsOn = n.GetDateValue(); } },
-                { "renewal_interval", n => { RenewalInterval = n.GetEnumValue<global::ArchiwindRevitAddIn.Api.Models.BillingPlan_renewal_interval>(); } },
-                { "renews_on", n => { RenewsOn = n.GetDateValue(); } },
-                { "started_on", n => { StartedOn = n.GetDateValue(); } },
-                { "state", n => { State = n.GetEnumValue<global::ArchiwindRevitAddIn.Api.Models.BillingPlan_state>(); } },
-                { "suspension_reason", n => { SuspensionReason = n.GetEnumValue<global::ArchiwindRevitAddIn.Api.Models.BillingPlan_suspension_reason>(); } },
+                { "detailed_credits", n => { DetailedCredits = n.GetObjectValue<global::ArchiwindRevitAddIn.Api.Models.BillingPlan.BillingPlan_detailed_credits>(global::ArchiwindRevitAddIn.Api.Models.BillingPlan.BillingPlan_detailed_credits.CreateFromDiscriminatorValue); } },
+                { "draft_credits", n => { DraftCredits = n.GetObjectValue<global::ArchiwindRevitAddIn.Api.Models.BillingPlan.BillingPlan_draft_credits>(global::ArchiwindRevitAddIn.Api.Models.BillingPlan.BillingPlan_draft_credits.CreateFromDiscriminatorValue); } },
+                { "expires_on", n => { ExpiresOn = n.GetDateValue(); } },
+                { "name", n => { Name = n.GetEnumValue<global::ArchiwindRevitAddIn.Api.Models.BillingPlan_name>(); } },
             };
         }
         /// <summary>
@@ -85,17 +73,133 @@ namespace ArchiwindRevitAddIn.Api.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteIntValue("available_credits", AvailableCredits);
-            writer.WriteDateValue("ends_on", EndsOn);
-            writer.WriteIntValue("monthly_credits", MonthlyCredits);
-            writer.WriteStringValue("name", Name);
-            writer.WriteDateValue("next_monthly_cycle_starts_on", NextMonthlyCycleStartsOn);
-            writer.WriteEnumValue<global::ArchiwindRevitAddIn.Api.Models.BillingPlan_renewal_interval>("renewal_interval", RenewalInterval);
-            writer.WriteDateValue("renews_on", RenewsOn);
-            writer.WriteDateValue("started_on", StartedOn);
-            writer.WriteEnumValue<global::ArchiwindRevitAddIn.Api.Models.BillingPlan_state>("state", State);
-            writer.WriteEnumValue<global::ArchiwindRevitAddIn.Api.Models.BillingPlan_suspension_reason>("suspension_reason", SuspensionReason);
+            writer.WriteObjectValue<global::ArchiwindRevitAddIn.Api.Models.BillingPlan.BillingPlan_detailed_credits>("detailed_credits", DetailedCredits);
+            writer.WriteObjectValue<global::ArchiwindRevitAddIn.Api.Models.BillingPlan.BillingPlan_draft_credits>("draft_credits", DraftCredits);
+            writer.WriteDateValue("expires_on", ExpiresOn);
+            writer.WriteEnumValue<global::ArchiwindRevitAddIn.Api.Models.BillingPlan_name>("name", Name);
             writer.WriteAdditionalData(AdditionalData);
+        }
+        /// <summary>
+        /// Composed type wrapper for classes <see cref="int"/>, <see cref="string"/>
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
+        public partial class BillingPlan_detailed_credits : IComposedTypeWrapper, IParsable
+        {
+            /// <summary>Composed type representation for type <see cref="int"/></summary>
+            public int? Integer { get; set; }
+            /// <summary>Composed type representation for type <see cref="string"/></summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            public string? String { get; set; }
+#nullable restore
+#else
+            public string String { get; set; }
+#endif
+            /// <summary>
+            /// Creates a new instance of the appropriate class based on discriminator value
+            /// </summary>
+            /// <returns>A <see cref="global::ArchiwindRevitAddIn.Api.Models.BillingPlan.BillingPlan_detailed_credits"/></returns>
+            /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
+            public static global::ArchiwindRevitAddIn.Api.Models.BillingPlan.BillingPlan_detailed_credits CreateFromDiscriminatorValue(IParseNode parseNode)
+            {
+                _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
+                var mappingValue = parseNode.GetChildNode("")?.GetStringValue();
+                var result = new global::ArchiwindRevitAddIn.Api.Models.BillingPlan.BillingPlan_detailed_credits();
+                if(parseNode.GetIntValue() is int integerValue)
+                {
+                    result.Integer = integerValue;
+                }
+                else if(parseNode.GetStringValue() is string stringValue)
+                {
+                    result.String = stringValue;
+                }
+                return result;
+            }
+            /// <summary>
+            /// The deserialization information for the current model
+            /// </summary>
+            /// <returns>A IDictionary&lt;string, Action&lt;IParseNode&gt;&gt;</returns>
+            public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers()
+            {
+                return new Dictionary<string, Action<IParseNode>>();
+            }
+            /// <summary>
+            /// Serializes information the current object
+            /// </summary>
+            /// <param name="writer">Serialization writer to use to serialize this model</param>
+            public virtual void Serialize(ISerializationWriter writer)
+            {
+                _ = writer ?? throw new ArgumentNullException(nameof(writer));
+                if(Integer != null)
+                {
+                    writer.WriteIntValue(null, Integer);
+                }
+                else if(String != null)
+                {
+                    writer.WriteStringValue(null, String);
+                }
+            }
+        }
+        /// <summary>
+        /// Composed type wrapper for classes <see cref="int"/>, <see cref="string"/>
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
+        public partial class BillingPlan_draft_credits : IComposedTypeWrapper, IParsable
+        {
+            /// <summary>Composed type representation for type <see cref="int"/></summary>
+            public int? Integer { get; set; }
+            /// <summary>Composed type representation for type <see cref="string"/></summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            public string? String { get; set; }
+#nullable restore
+#else
+            public string String { get; set; }
+#endif
+            /// <summary>
+            /// Creates a new instance of the appropriate class based on discriminator value
+            /// </summary>
+            /// <returns>A <see cref="global::ArchiwindRevitAddIn.Api.Models.BillingPlan.BillingPlan_draft_credits"/></returns>
+            /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
+            public static global::ArchiwindRevitAddIn.Api.Models.BillingPlan.BillingPlan_draft_credits CreateFromDiscriminatorValue(IParseNode parseNode)
+            {
+                _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
+                var mappingValue = parseNode.GetChildNode("")?.GetStringValue();
+                var result = new global::ArchiwindRevitAddIn.Api.Models.BillingPlan.BillingPlan_draft_credits();
+                if(parseNode.GetIntValue() is int integerValue)
+                {
+                    result.Integer = integerValue;
+                }
+                else if(parseNode.GetStringValue() is string stringValue)
+                {
+                    result.String = stringValue;
+                }
+                return result;
+            }
+            /// <summary>
+            /// The deserialization information for the current model
+            /// </summary>
+            /// <returns>A IDictionary&lt;string, Action&lt;IParseNode&gt;&gt;</returns>
+            public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers()
+            {
+                return new Dictionary<string, Action<IParseNode>>();
+            }
+            /// <summary>
+            /// Serializes information the current object
+            /// </summary>
+            /// <param name="writer">Serialization writer to use to serialize this model</param>
+            public virtual void Serialize(ISerializationWriter writer)
+            {
+                _ = writer ?? throw new ArgumentNullException(nameof(writer));
+                if(Integer != null)
+                {
+                    writer.WriteIntValue(null, Integer);
+                }
+                else if(String != null)
+                {
+                    writer.WriteStringValue(null, String);
+                }
+            }
         }
     }
 }

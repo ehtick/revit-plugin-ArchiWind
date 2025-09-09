@@ -4,6 +4,7 @@ using ArchiWindRevitAddIn.Models.Validators;
 using ArchiWindRevitAddIn.Services;
 using Autodesk.Revit.UI;
 using FluentValidation;
+using Microsoft.Kiota.Abstractions;
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -155,11 +156,42 @@ namespace ArchiWindRevitAddIn.ViewModels
                 if (user.BillingPlan is null)
                 {
                     AccountDetails += "\nNo billing plan.";
+                    return;
+                }
+
+                AccountDetails += $"\nBilling plan: {user.BillingPlan.Name}.";
+
+                if (user.BillingPlan.ExpiresOn is Date expiresOn)
+                {
+                    AccountDetails += $"\nExpires on: {expiresOn.DateTime:d}.";
+
+                }
+
+                var draftCredits = "";
+
+                if (user.BillingPlan.DraftCredits?.String == "inf")
+                {
+                    draftCredits = "unlimited";
                 }
                 else
                 {
-                    AccountDetails += $"\nBilling plan: {user.BillingPlan.Name} ({user.BillingPlan.State})";
+                    draftCredits = $"{user.BillingPlan.DraftCredits?.Integer ?? 0}";
                 }
+
+                AccountDetails += $"\nDraft credits: {draftCredits}.";
+
+                var detailedCredits = "";
+
+                if (user.BillingPlan.DetailedCredits?.String == "inf")
+                {
+                    detailedCredits = "unlimited";
+                }
+                else
+                {
+                    detailedCredits = $"{user.BillingPlan.DetailedCredits?.Integer ?? 0}";
+                }
+
+                AccountDetails += $"\nDetailed credits: {detailedCredits}.";
             }
             catch (JsonErrorResponse)
             {
