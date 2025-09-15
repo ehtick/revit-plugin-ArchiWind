@@ -1,4 +1,4 @@
-﻿using ArchiwindRevitAddIn.Api.Models;
+﻿using ArchiWindRevitAddIn.Extensions;
 using ArchiWindRevitAddIn.Models.Forms;
 using ArchiWindRevitAddIn.Models.Validators;
 using ArchiWindRevitAddIn.Services;
@@ -153,49 +153,17 @@ namespace ArchiWindRevitAddIn.ViewModels
 
                 AccountDetails += "\n";
 
-                if (user.BillingPlan is null)
-                {
-                    AccountDetails += "\nNo billing plan.";
-                    return;
-                }
+                var billingPlan = user.BillingPlan!;
 
-                AccountDetails += $"\nBilling plan: {user.BillingPlan.Name}.";
+                AccountDetails += $"\nBilling plan: {billingPlan.HumanName()}.";
 
-                if (user.BillingPlan.ExpiresOn is Date expiresOn)
+                if (billingPlan.ExpiresOn is Date expiresOn)
                 {
                     AccountDetails += $"\nExpires on: {expiresOn.DateTime:d}.";
-
                 }
 
-                var draftCredits = "";
-
-                if (user.BillingPlan.DraftCredits?.String == "inf")
-                {
-                    draftCredits = "unlimited";
-                }
-                else
-                {
-                    draftCredits = $"{user.BillingPlan.DraftCredits?.Integer ?? 0}";
-                }
-
-                AccountDetails += $"\nDraft credits: {draftCredits}.";
-
-                var detailedCredits = "";
-
-                if (user.BillingPlan.DetailedCredits?.String == "inf")
-                {
-                    detailedCredits = "unlimited";
-                }
-                else
-                {
-                    detailedCredits = $"{user.BillingPlan.DetailedCredits?.Integer ?? 0}";
-                }
-
-                AccountDetails += $"\nDetailed credits: {detailedCredits}.";
-            }
-            catch (JsonErrorResponse)
-            {
-                return;
+                AccountDetails += $"\nDraft credits: {billingPlan.DraftCreditsString()}.";
+                AccountDetails += $"\nDetailed credits: {billingPlan.DetailedCreditsString()}.";
             }
             catch (Exception ex)
             {
@@ -234,12 +202,13 @@ namespace ArchiWindRevitAddIn.ViewModels
 
             foreach (var error in results.Errors)
             {
-                if (!errors.ContainsKey(error.PropertyName))
+                if (!errors.TryGetValue(error.PropertyName, out List<string>? value))
                 {
-                    errors[error.PropertyName] = [];
+                    value = [];
+                    errors[error.PropertyName] = value;
                 }
 
-                errors[error.PropertyName].Add(error.ErrorMessage);
+                value.Add(error.ErrorMessage);
 
                 ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(error.PropertyName));
             }

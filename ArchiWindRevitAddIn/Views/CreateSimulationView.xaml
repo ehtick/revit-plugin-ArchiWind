@@ -6,13 +6,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:viewModel="clr-namespace:ArchiWindRevitAddIn.ViewModels"
+    xmlns:converter="clr-namespace:ArchiWindRevitAddIn.Views.Converters"
+    xmlns:apiModels="clr-namespace:ArchiwindRevitAddIn.Api.Models"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance viewModel:CreateSimulationViewModel}"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     Title="Create Simulation"
     Height="Auto"
-    Width="600"
+    Width="650"
     SizeToContent="Height"
     Icon="/ArchiWindRevitAddIn;component/Resources/Icons/icon.ico">
     <i:Interaction.Triggers>
@@ -20,8 +22,13 @@
             <i:InvokeCommandAction Command="{Binding LoadCoordinatesFromDocument}" />
             <i:InvokeCommandAction Command="{Binding DoUpdateGeometriesControls}" />
             <i:InvokeCommandAction Command="{Binding LoadProjects}" />
+            <i:InvokeCommandAction Command="{Binding LoadBillingStatus}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
+    
+    <Window.Resources>
+        <converter:EnumBooleanConverter x:Key="EnumBooleanConverter" />
+    </Window.Resources>
     
     <Grid>
         <Grid.RowDefinitions>
@@ -49,21 +56,17 @@
                 <Grid Grid.Column="1" Grid.Row="0" Margin="0,0,5,0"  VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
-                        <ColumnDefinition Width="60"/>
                         <ColumnDefinition Width="70"/>
                     </Grid.ColumnDefinitions>
 
                     <ComboBox
                         Grid.Column="0"
-                        Margin="0,0,10,0"
                         IsEnabled="{Binding IsProjectSelectionEnabled}"
                         SelectedItem="{Binding Path=SelectedProject, ValidatesOnNotifyDataErrors=True}"
                         ItemsSource="{Binding Path=Projects}"
                         DisplayMemberPath="Name"
                         ToolTip="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={RelativeSource Self}}" />
-
-                    <Button Grid.Column="1" Content="New..." Margin="0,2,0,2" />
-                    <Button Grid.Column="2" Content="Refresh" Margin="10,2,0,2" Command="{Binding LoadProjects}"/>
+                    <Button Grid.Column="1" Content="Refresh" Margin="10,2,0,2" Command="{Binding LoadProjects}"/>
                 </Grid>
 
                 <Label Grid.Column="0" Grid.Row="1" Content="Name:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" />
@@ -78,8 +81,10 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
-                    <RadioButton Grid.Column="0" Content="Draft" IsChecked="True" />
-                    <RadioButton Grid.Column="1" Content="Detailed" />
+                    <RadioButton Grid.Column="0" GroupName="Quality" Content="Draft"
+                                 IsChecked="{Binding SelectedQuality, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static apiModels:SimulationQuality.Draft}}" />
+                    <RadioButton Grid.Column="1" GroupName="Quality" Content="Detailed"
+                                 IsChecked="{Binding SelectedQuality, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static apiModels:SimulationQuality.Detailed}}"/>
                 </Grid>
 
                 <Label Grid.Column="0" Grid.Row="3" Content="Coordinates (WSG 84):" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" />
@@ -189,14 +194,19 @@
             </Grid>
         </GroupBox>
 
-        <Grid Name="Actions" Grid.Row="3" Margin="0,0,0,0" HorizontalAlignment="Right">
+        <Grid Name="Actions" Grid.Row="3" Margin="0,0,0,0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="75"/>
                 <ColumnDefinition Width="75"/>
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" Content="Create" Command="{Binding CreateCommand}" Margin="0,10,10,10" IsDefault="True" />
-            <Button Grid.Column="1" Content="Cancel" Margin="0,10,10,10" IsCancel="True" />
+            <TextBlock Grid.Column="0" Text="{Binding BillingPlanNotice}" Margin="10,10" HorizontalAlignment="Left"/>
+            <TextBlock Grid.Column="1" Text="{Binding CostNotice}" Margin="10,10,20,10" HorizontalAlignment="Right"/>
+
+            <Button Grid.Column="2" Width="65" Content="Create" Command="{Binding CreateCommand}" Margin="0,10,10,10" IsDefault="True" HorizontalAlignment="Right"/>
+            <Button Grid.Column="3" Width="65" Content="Cancel" Margin="0,10,10,10" IsCancel="True" HorizontalAlignment="Right" />
         </Grid>
     </Grid>
 </Window>

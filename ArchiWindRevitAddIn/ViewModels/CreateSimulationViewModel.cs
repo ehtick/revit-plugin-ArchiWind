@@ -1,4 +1,5 @@
 ﻿using ArchiwindRevitAddIn.Api.Models;
+using ArchiWindRevitAddIn.Extensions;
 using ArchiWindRevitAddIn.Models;
 using ArchiWindRevitAddIn.Models.Forms;
 using ArchiWindRevitAddIn.Models.Validators;
@@ -35,7 +36,7 @@ namespace ArchiWindRevitAddIn.ViewModels
         private string name = string.Empty;
 
         [ObservableProperty]
-        private bool isDraftQuality = true;
+        private SimulationQuality selectedQuality = SimulationQuality.Draft;
 
         [ObservableProperty]
         private bool isDetailedQuality = false;
@@ -88,6 +89,12 @@ namespace ArchiWindRevitAddIn.ViewModels
         [ObservableProperty]
         private string vegetationViewStatus = string.Empty;
 
+        [ObservableProperty]
+        private string billingPlanNotice = "Loading...";
+
+        [ObservableProperty]
+        private string costNotice = string.Empty;
+
         public ObservableCollection<ProjectV1> Projects { get; } = [];
 
         public ObservableCollection<int> RefSystems { get; } = [];
@@ -97,10 +104,15 @@ namespace ArchiWindRevitAddIn.ViewModels
         public RelayCommand ClearRefSystem { get; private set; }
         public RelayCommand DoUpdateGeometriesControls { get; private set; }
         public AsyncRelayCommand LoadProjects { get; private set; }
+        public AsyncRelayCommand LoadBillingStatus { get; private set; }
 
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
         private Document Document { get; set; }
+
+        private BillingPlan? billingPlan = null;
+
+        private bool hasEnoughCredits = false;
 
         public CreateSimulationViewModel(Document document)
         {
@@ -109,6 +121,7 @@ namespace ArchiWindRevitAddIn.ViewModels
             ClearRefSystem = new(PerformClearRefSystem);
             LoadProjects = new(PerformLoadProjects);
             DoUpdateGeometriesControls = new(UpdateGeometriesControls);
+            LoadBillingStatus = new(PerformLoadBillingStatus);
 
             Document = document;
             Name = document.Title;
@@ -118,7 +131,7 @@ namespace ArchiWindRevitAddIn.ViewModels
 
         private bool CanCreate()
         {
-            return !HasErrors;
+            return !HasErrors && hasEnoughCredits;
         }
 
         private async Task Create()
@@ -224,6 +237,38 @@ namespace ArchiWindRevitAddIn.ViewModels
             }
         }
 
+        private async Task PerformLoadBillingStatus()
+        {
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                var response = await ServiceLocator.ApiClient.Users.Self.GetAsync();
+
+                if (response?.BillingPlan == null)
+                {
+                    throw new Exception("failed to fetch billing status");
+                }
+
+                billingPlan = response.BillingPlan;
+
+                BillingPlanNotice = $"Plan: {billingPlan.HumanName()}, Draft credits: {billingPlan.DraftCreditsString()}, Detailed credits: {billingPlan.DetailedCreditsString()}";
+
+                await CheckIfAccountHasEnoughCredits();
+            }
+            catch (Exception ex)
+            {
+                TaskDialog.Show("Error",
+                                $"An error occured, please report to the developer: \n\n{ex.GetType()}\n{ex.Message}",
+                                TaskDialogCommonButtons.Ok,
+                                TaskDialogResult.Ok);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
+        }
+
         private void PerformClearRefSystem()
         {
             SelectedRefSystem = null;
@@ -255,6 +300,15 @@ namespace ArchiWindRevitAddIn.ViewModels
             simParams.Name = value;
 
             ValidateProperty(nameof(Name));
+        }
+
+        partial void OnSelectedQualityChanged(SimulationQuality value)
+        {
+            simParams.Quality = value;
+
+            ValidateProperty(nameof(Name));
+
+            _ = CheckIfAccountHasEnoughCredits();
         }
 
         partial void OnLatitudeChanged(string value)
@@ -468,6 +522,58 @@ namespace ArchiWindRevitAddIn.ViewModels
             catch (Exception ex)
             {
                 TaskDialog.Show("Error", $"Cannot open URL to simulation: {ex.Message}", TaskDialogCommonButtons.Ok, TaskDialogResult.Ok);
+            }
+        }
+
+        private async Task CheckIfAccountHasEnoughCredits()
+        {
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                var response = await ServiceLocator.ApiClient.V1.Simulations.CostPreview.GetAsync(r =>
+                {
+                    r.QueryParameters.QualityAsSimulationQuality = SelectedQuality;
+                }) ?? throw new Exception("server isssue");
+
+                if (response.CanRun is null or false)
+                {
+                    hasEnoughCredits = false;
+                    CostNotice = $"Not enough credits.";
+                    return;
+                }
+
+                hasEnoughCredits = true;
+
+                if (response.DraftCredits == 0 || response.DetailedCredits == 0)
+                {
+                    CostNotice = $"Cost: free.";
+                }
+                else if ((response.DraftCredits ?? -1) > 0)
+                {
+                    CostNotice = $"Cost: {response.DraftCredits} draft credit(s).";
+                }
+                else if ((response.DetailedCredits ?? -1) > 0)
+                {
+                    CostNotice = $"Cost: {response.DetailedCredits} detailed credit(s).";
+                }
+                else
+                {
+                    CostNotice = "Cost: unknown.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TaskDialog.Show("Error",
+                                $"Could not get the cost of such a simulation.\nPlease report to the developer: \n\n{ex.GetType()}\n{ex.Message}",
+                                TaskDialogCommonButtons.Ok,
+                                TaskDialogResult.Ok);
+            }
+            finally
+            {
+                CreateCommand.NotifyCanExecuteChanged();
+
+                Mouse.OverrideCursor = null;
             }
         }
     }
