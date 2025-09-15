@@ -16,10 +16,10 @@ namespace ArchiwindRevitAddIn.Api.Models
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The can_run property</summary>
         public bool? CanRun { get; set; }
-        /// <summary>The detailed_credits_required property</summary>
-        public int? DetailedCreditsRequired { get; set; }
-        /// <summary>The draft_credits_required property</summary>
-        public int? DraftCreditsRequired { get; set; }
+        /// <summary>The detailed_credits property</summary>
+        public int? DetailedCredits { get; set; }
+        /// <summary>The draft_credits property</summary>
+        public int? DraftCredits { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::ArchiwindRevitAddIn.Api.Models.SimulationCostPreviewV1"/> and sets the default values.
         /// </summary>
@@ -46,8 +46,8 @@ namespace ArchiwindRevitAddIn.Api.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "can_run", n => { CanRun = n.GetBoolValue(); } },
-                { "detailed_credits_required", n => { DetailedCreditsRequired = n.GetIntValue(); } },
-                { "draft_credits_required", n => { DraftCreditsRequired = n.GetIntValue(); } },
+                { "detailed_credits", n => { DetailedCredits = n.GetIntValue(); } },
+                { "draft_credits", n => { DraftCredits = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -58,8 +58,8 @@ namespace ArchiwindRevitAddIn.Api.Models
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteBoolValue("can_run", CanRun);
-            writer.WriteIntValue("detailed_credits_required", DetailedCreditsRequired);
-            writer.WriteIntValue("draft_credits_required", DraftCreditsRequired);
+            writer.WriteIntValue("detailed_credits", DetailedCredits);
+            writer.WriteIntValue("draft_credits", DraftCredits);
             writer.WriteAdditionalData(AdditionalData);
         }
     }
