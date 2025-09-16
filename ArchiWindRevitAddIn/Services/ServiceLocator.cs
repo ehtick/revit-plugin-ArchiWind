@@ -62,6 +62,9 @@ namespace ArchiWindRevitAddIn.Services
                         Enabled = true,
                         ProductName = "revit-plugin",
                     }),
+#if !NET7_0_OR_GREATER
+                    new DowngradeHttpVersionHandler(),
+#endif
                 ]
             );
 
@@ -128,6 +131,16 @@ namespace ArchiWindRevitAddIn.Services
             {
                 request.Headers.Add("idempotency-key", Guid.NewGuid().ToString());
             }
+
+            return await base.SendAsync(request, cancellationToken);
+        }
+    }
+
+    public class DowngradeHttpVersionHandler : System.Net.Http.DelegatingHandler
+    {
+        protected override async Task<System.Net.Http.HttpResponseMessage> SendAsync(System.Net.Http.HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            request.Version = new Version(1, 1);
 
             return await base.SendAsync(request, cancellationToken);
         }
