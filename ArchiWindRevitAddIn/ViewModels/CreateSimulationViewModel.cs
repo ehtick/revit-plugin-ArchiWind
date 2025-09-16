@@ -143,6 +143,8 @@ namespace ArchiWindRevitAddIn.ViewModels
                 return;
             }
 
+            var project = SelectedProject!;
+
             ProgressViewModel? progressViewModel = null;
             ProgressView? progressView = null;
 
@@ -181,7 +183,7 @@ namespace ArchiWindRevitAddIn.ViewModels
 
                 await dispatcher.BeginInvoke(() => progressViewModel.SetCompleted("Simulation created."));
 
-                OpenSimulationInBrowser(createdSimulation);
+                OpenProjectInBrowser(project);
 
                 await dispatcher.BeginInvoke(() => progressView.Close());
             }
@@ -509,13 +511,13 @@ namespace ArchiWindRevitAddIn.ViewModels
             status($"{elementsInView} element{(elementsInView > 1 ? "s" : "")}");
         }
 
-        private static void OpenSimulationInBrowser(SimulationV1 sim)
+        private static void OpenProjectInBrowser(ProjectV1 project)
         {
             try
             {
                 Process.Start(new ProcessStartInfo
                 {
-                    FileName = sim.BrowserUrl!,
+                    FileName = project.BrowserUrl!,
                     UseShellExecute = true
                 });
             }
