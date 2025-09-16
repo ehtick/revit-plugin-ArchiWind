@@ -19,8 +19,8 @@ public static class Generator
 
         var revitFeature = new Feature
         {
-            Name = "Revit Add-in",
-            Description = "Revit add-in installation files",
+            Name = "ArchiWind Revit Add-in",
+            Description = "Create wind simulations on ArchiWind directly from Revit projects.",
             Display = FeatureDisplay.expand
         };
 
@@ -31,7 +31,7 @@ public static class Generator
             var feature = new Feature
             {
                 Name = fileVersion,
-                Description = $"Install add-in for Revit {fileVersion}",
+                Description = $"Install ArchiWind Add-In for Revit {fileVersion}",
                 ConfigurableDir = $"INSTALL{fileVersion}"
             };
 

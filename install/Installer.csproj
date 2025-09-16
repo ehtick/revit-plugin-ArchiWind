@@ -10,8 +10,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="WixSharp.bin" Version="1.26.0"/>
-        <PackageReference Include="WixSharp.wix.bin" Version="3.14.1"/>
+      <None Remove="Resources\Icons\BackgroundImage.png" />
+      <None Remove="Resources\Icons\icon.ico" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="WixSharp.bin" Version="1.26.0" />
+        <PackageReference Include="WixSharp.wix.bin" Version="3.14.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Resource Include="Resources\Icons\BackgroundImage.png" />
+      <Resource Include="Resources\Icons\icon.ico" />
     </ItemGroup>
 
 </Project>

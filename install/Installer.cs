@@ -6,7 +6,7 @@ using WixSharp.Controls;
 using Assembly = System.Reflection.Assembly;
 
 const string outputName = "NablaFlow.ArchiWind";
-const string projectName = "NablaFlow.ArchiWind";
+const string projectName = "ArchiWind Revit Add-In";
 
 var project = new Project
 {
@@ -22,7 +22,7 @@ var project = new Project
     ControlPanelInfo =
     {
         Manufacturer = Environment.UserName,
-        ProductIcon = @"install\Resources\Icons\ShellIcon.ico"
+        ProductIcon = @"install\Resources\Icons\icon.ico"
     }
 };
 
