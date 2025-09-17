@@ -16,11 +16,7 @@ namespace ArchiWindRevitAddIn.Views
 
             InitializeComponent();
 
-            viewModel.CloseCommand = new RelayCommand(() =>
-            {
-                DialogResult = viewModel.IsCompleted;
-                Close();
-            }, () => viewModel.IsCompleted);
+            viewModel.OnRequestClose += (s, e) => Close();
         }
 
         protected override void OnClosing(CancelEventArgs e)

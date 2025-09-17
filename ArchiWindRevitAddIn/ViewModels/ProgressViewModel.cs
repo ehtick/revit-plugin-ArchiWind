@@ -30,6 +30,8 @@ namespace ArchiWindRevitAddIn.ViewModels
 
         public Dispatcher Dispatcher { get; private set; }
 
+        public event EventHandler? OnRequestClose;
+
         public ProgressViewModel(string title)
         {
             Title = title;
@@ -51,6 +53,10 @@ namespace ArchiWindRevitAddIn.ViewModels
 
         private void Close()
         {
+            if (OnRequestClose is not null)
+            {
+                OnRequestClose(this, new EventArgs());
+            }
         }
 
         public void UpdateProgress(int incr)
@@ -71,6 +77,8 @@ namespace ArchiWindRevitAddIn.ViewModels
             ProgressValue = ProgressMaximum;
 
             AddLogMessage(finalMessage);
+
+            CloseCommand.NotifyCanExecuteChanged();
         }
     }
 }
