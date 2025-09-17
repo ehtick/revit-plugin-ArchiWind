@@ -88,25 +88,18 @@ namespace ArchiWindRevitAddIn.ViewModels
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                Debug.WriteLine("validating token...");
-                var tokenStatus = await TokenValidator.IsPatValid(Pat);
-                Debug.WriteLine($"token status: {tokenStatus}");
 
-                if (tokenStatus is TokenValidator.TokenStatus.Invalid)
+                try
+                {
+                    var client = ServiceLocator.CreateApiClient(Pat);
+                    var _user = await client.Users.Self.GetAsync();
+                }
+                catch (InvalidOrExpiredToken)
                 {
                     var propertyName = nameof(Pat);
                     errors[propertyName] = ["Token is invalid or expired."];
                     ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
                     ConfirmCommand.NotifyCanExecuteChanged();
-                    return;
-                }
-
-                if (tokenStatus is TokenValidator.TokenStatus.Unknown)
-                {
-                    TaskDialog.Show("Error",
-                                    $"API error, retry later.",
-                                    TaskDialogCommonButtons.Ok,
-                                    TaskDialogResult.Ok);
                     return;
                 }
 
@@ -169,6 +162,11 @@ namespace ArchiWindRevitAddIn.ViewModels
             catch (NoTokenConfigured)
             {
                 AccountDetailsVisibility = System.Windows.Visibility.Collapsed;
+            }
+            catch (InvalidOrExpiredToken)
+            {
+                AccountDetailsVisibility = System.Windows.Visibility.Visible;
+                AccountDetails = $"Your token is either expired or invalid. Please create a new one.";
             }
             catch (Exception ex)
             {

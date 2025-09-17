@@ -66,6 +66,7 @@ namespace ArchiWindRevitAddIn.Services
 #if !NET7_0_OR_GREATER
                     new DowngradeHttpVersionHandler(),
 #endif
+                    new CheckExpiredTokenHandler(),
                 ]
             );
 
@@ -110,7 +111,7 @@ namespace ArchiWindRevitAddIn.Services
 
             if (pat == null)
             {
-                return Task.FromException(new NoTokenConfigured("no PAT configured"));
+                return Task.FromException(new NoTokenConfigured());
             }
 
             request.Headers.TryAdd("x-nablaflow-token", Utils.ConvertSecureStringToString(pat));
@@ -144,6 +145,21 @@ namespace ArchiWindRevitAddIn.Services
             request.Version = new Version(1, 1);
 
             return await base.SendAsync(request, cancellationToken);
+        }
+    }
+
+    public class CheckExpiredTokenHandler : System.Net.Http.DelegatingHandler
+    {
+        protected override async Task<System.Net.Http.HttpResponseMessage> SendAsync(System.Net.Http.HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var resp = await base.SendAsync(request, cancellationToken);
+
+            if (resp.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                throw new InvalidOrExpiredToken();
+            }
+
+            return resp;
         }
     }
 }

@@ -228,6 +228,9 @@ namespace ArchiWindRevitAddIn.ViewModels
             catch (NoTokenConfigured)
             {
             }
+            catch (InvalidOrExpiredToken)
+            {
+            }
             catch (Exception ex)
             {
                 TaskDialog.Show("Error",
@@ -262,7 +265,11 @@ namespace ArchiWindRevitAddIn.ViewModels
             }
             catch (NoTokenConfigured)
             {
-                BillingPlanNotice = "No token configured. Click on Account and add one.";
+                BillingPlanNotice = "No token configured. Click on Account to add one.";
+            }
+            catch (InvalidOrExpiredToken)
+            {
+                BillingPlanNotice = "Token is expired. Click on Account to add a new one.";
             }
             catch (Exception ex)
             {
@@ -571,6 +578,9 @@ namespace ArchiWindRevitAddIn.ViewModels
                 }
             }
             catch (NoTokenConfigured)
+            {
+            }
+            catch (InvalidOrExpiredToken)
             {
             }
             catch (Exception ex)

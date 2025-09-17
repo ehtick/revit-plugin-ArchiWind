@@ -1,6 +1,6 @@
 ﻿namespace ArchiWindRevitAddIn.Exceptions
 {
-    class NoTokenConfigured() : Exception()
+    class InvalidOrExpiredToken() : Exception()
     {
     }
 }

@@ -33,6 +33,11 @@ namespace ArchiWindRevitAddIn.Services
                 return;
             }
 
+            if (key.GetValue(REGISTRY_KEY_PAT) is null)
+            {
+                return;
+            }
+
             key.DeleteValue(REGISTRY_KEY_PAT);
         }
 
