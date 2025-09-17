@@ -1,4 +1,5 @@
 using ArchiwindRevitAddIn.Api;
+using ArchiWindRevitAddIn.Exceptions;
 using ArchiWindRevitAddIn.Views;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
@@ -109,7 +110,7 @@ namespace ArchiWindRevitAddIn.Services
 
             if (pat == null)
             {
-                return Task.FromException(new InvalidOperationException("no PAT configured"));
+                return Task.FromException(new NoTokenConfigured("no PAT configured"));
             }
 
             request.Headers.TryAdd("x-nablaflow-token", Utils.ConvertSecureStringToString(pat));

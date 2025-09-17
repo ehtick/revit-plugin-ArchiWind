@@ -1,4 +1,5 @@
 ﻿using ArchiwindRevitAddIn.Api.Models;
+using ArchiWindRevitAddIn.Exceptions;
 using ArchiWindRevitAddIn.Extensions;
 using ArchiWindRevitAddIn.Models;
 using ArchiWindRevitAddIn.Models.Forms;
@@ -150,7 +151,7 @@ namespace ArchiWindRevitAddIn.ViewModels
 
             var progressThread = new Thread(() =>
             {
-                progressViewModel = new("Simulation creation progress");
+                progressViewModel = new($"Simulation `{simParams.Name}` creation progress");
                 progressView = new(progressViewModel);
 
                 progressView.Show();
@@ -184,8 +185,6 @@ namespace ArchiWindRevitAddIn.ViewModels
                 await dispatcher.BeginInvoke(() => progressViewModel.SetCompleted("Simulation created."));
 
                 OpenProjectInBrowser(project);
-
-                await dispatcher.BeginInvoke(() => progressView.Close());
             }
             catch (JsonErrorResponse ex)
             {
@@ -226,6 +225,9 @@ namespace ArchiWindRevitAddIn.ViewModels
                     IsProjectSelectionEnabled = true;
                 }
             }
+            catch (NoTokenConfigured)
+            {
+            }
             catch (Exception ex)
             {
                 TaskDialog.Show("Error",
@@ -257,6 +259,10 @@ namespace ArchiWindRevitAddIn.ViewModels
                 BillingPlanNotice = $"Plan: {billingPlan.HumanName()}, Draft credits: {billingPlan.DraftCreditsString()}, Detailed credits: {billingPlan.DetailedCreditsString()}";
 
                 await CheckIfAccountHasEnoughCredits();
+            }
+            catch (NoTokenConfigured)
+            {
+                BillingPlanNotice = "No token configured. Click on Account and add one.";
             }
             catch (Exception ex)
             {
@@ -563,6 +569,9 @@ namespace ArchiWindRevitAddIn.ViewModels
                 {
                     CostNotice = "Cost: unknown.";
                 }
+            }
+            catch (NoTokenConfigured)
+            {
             }
             catch (Exception ex)
             {

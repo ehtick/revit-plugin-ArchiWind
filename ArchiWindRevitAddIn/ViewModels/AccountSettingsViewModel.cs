@@ -1,4 +1,5 @@
-﻿using ArchiWindRevitAddIn.Extensions;
+﻿using ArchiWindRevitAddIn.Exceptions;
+using ArchiWindRevitAddIn.Extensions;
 using ArchiWindRevitAddIn.Models.Forms;
 using ArchiWindRevitAddIn.Models.Validators;
 using ArchiWindRevitAddIn.Services;
@@ -21,7 +22,7 @@ namespace ArchiWindRevitAddIn.ViewModels
         private readonly AccountSettingsForm accountParams = new();
 
         [ObservableProperty]
-        private System.Windows.Visibility accountDetailsVisibility = System.Windows.Visibility.Hidden;
+        private System.Windows.Visibility accountDetailsVisibility = System.Windows.Visibility.Collapsed;
 
         [ObservableProperty]
         private string accountDetails = string.Empty;
@@ -56,7 +57,7 @@ namespace ArchiWindRevitAddIn.ViewModels
         {
             Pat = new SecureString();
             ConfigurationService.DeletePAT();
-            AccountDetailsVisibility = System.Windows.Visibility.Hidden;
+            AccountDetailsVisibility = System.Windows.Visibility.Collapsed;
         }
 
         public IEnumerable GetErrors(string? propertyName)
@@ -164,6 +165,10 @@ namespace ArchiWindRevitAddIn.ViewModels
 
                 AccountDetails += $"\nDraft credits: {billingPlan.DraftCreditsString()}.";
                 AccountDetails += $"\nDetailed credits: {billingPlan.DetailedCreditsString()}.";
+            }
+            catch (NoTokenConfigured)
+            {
+                AccountDetailsVisibility = System.Windows.Visibility.Collapsed;
             }
             catch (Exception ex)
             {
