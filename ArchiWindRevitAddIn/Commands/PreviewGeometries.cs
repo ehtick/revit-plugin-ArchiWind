@@ -10,11 +10,18 @@ namespace ArchiWindRevitAddIn.Commands
     {
         private const string TRANSACTION_NAME = "ArchiWind 3D views setup";
 
+        private List<string> viewNames = [
+            Utils.BUILDING_VIEW,
+            Utils.SURROUNDINGS_VIEW,
+            Utils.VEGETATION_VIEW,
+            Utils.TERRAIN_VIEW,
+        ];
+
         public override void Execute()
         {
             Document doc = ActiveView.Document;
 
-            if (ActiveView.ViewType != ViewType.ThreeD)
+            if (ActiveView.ViewType != ViewType.ThreeD || viewNames.Contains(ActiveView.Name))
             {
                 TaskDialog.Show("Error",
                                 $"Please select the document's 3D view.",
