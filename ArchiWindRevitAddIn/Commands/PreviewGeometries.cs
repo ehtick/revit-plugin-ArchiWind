@@ -55,6 +55,11 @@ namespace ArchiWindRevitAddIn.Commands
                 UiDocument.RequestViewChange(surroundingsView);
                 UiDocument.RequestViewChange(vegetationView);
                 UiDocument.RequestViewChange(terrainView);
+
+                TaskDialog.Show("Success",
+                    $"Views created.\nYou can now customise them with what should be visibile and be used for export.",
+                    TaskDialogCommonButtons.Ok,
+                    TaskDialogResult.Ok);
             }
             catch (Exception ex)
             {
