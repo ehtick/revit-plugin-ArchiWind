@@ -1,3 +1,7 @@
+# 1.0.0-rc.4
+
+- Added task dialog to informt the user what the 3D views are for.
+
 # 1.0.0-rc.3
 
 - Fixed elements counts in views.
