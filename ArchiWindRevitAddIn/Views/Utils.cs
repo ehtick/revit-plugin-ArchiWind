@@ -18,7 +18,8 @@ namespace ArchiWindRevitAddIn.Views
         {
             return new FilteredElementCollector(doc, view.Id)
                 .WhereElementIsNotElementType()
-                .GetElementCount();
+                .Where(e => e.Category?.IsVisibleInUI ?? false)
+                .Count();
         }
 
         public static void OnlyShowCategories(Document doc, View3D view, HashSet<BuiltInCategory> showCategories)
@@ -112,14 +113,15 @@ namespace ArchiWindRevitAddIn.Views
             exportOptions.SetTessellationSettings(ExportResolution.Medium);
 #endif
 
-            var result = doc.Export(folder, filename, exportOptions);
+            bool result = doc.Export(folder, filename, exportOptions);
+            var path = Path.Combine(folder, filename);
 
-            if (result == false)
+            if (result == false || !File.Exists(path))
             {
-                throw new StlExportFailed("");
+                throw new StlExportFailed();
             }
 
-            return Path.Combine(folder, filename);
+            return path;
         }
 
         public static string BytesToString(long byteCount)

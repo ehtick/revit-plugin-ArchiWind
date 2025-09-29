@@ -517,11 +517,12 @@ namespace ArchiWindRevitAddIn.ViewModels
                 isEnabled(false);
                 hasGeometry(false);
                 status("View is empty");
+                return;
             }
 
             isEnabled(true);
             hasGeometry(true);
-            status($"{elementsInView} element{(elementsInView > 1 ? "s" : "")}");
+            status($"{elementsInView} element{(elementsInView != 1 ? "s" : "")}");
         }
 
         private static void OpenProjectInBrowser(ProjectV1 project)

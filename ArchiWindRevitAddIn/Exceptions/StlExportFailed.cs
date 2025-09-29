@@ -1,6 +1,6 @@
 ﻿namespace ArchiWindRevitAddIn.Exceptions
 {
-    class StlExportFailed(string? message) : Exception(message)
+    class StlExportFailed() : Exception()
     {
     }
 }

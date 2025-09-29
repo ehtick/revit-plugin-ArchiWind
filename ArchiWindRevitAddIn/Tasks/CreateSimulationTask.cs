@@ -1,5 +1,6 @@
 ﻿using ArchiwindRevitAddIn.Api;
 using ArchiwindRevitAddIn.Api.Models;
+using ArchiWindRevitAddIn.Exceptions;
 using ArchiWindRevitAddIn.Models.Forms;
 using ArchiWindRevitAddIn.Services;
 using ArchiWindRevitAddIn.ViewModels;
@@ -158,7 +159,7 @@ namespace ArchiWindRevitAddIn.Tasks
             return (buildingPath, surroundingsPath, terrainPath, vegetationPath);
         }
 
-        public static string ExportGeometryToStl(
+        public static string? ExportGeometryToStl(
             ProgressViewModel progressViewModel,
             Document doc,
             string viewName,
@@ -172,11 +173,19 @@ namespace ArchiWindRevitAddIn.Tasks
 
             var view = Utils.FindView(doc, viewName);
 
-            var path = Utils.ExportViewAsStl(doc, view!.Id, tmpdir, filename);
-            var size = Utils.BytesToString(new FileInfo(path).Length);
-            progressViewModel.Dispatcher.Invoke(() => progressViewModel.AddLogMessage($"Exported {filename}: {size}"));
+            try
+            {
+                var path = Utils.ExportViewAsStl(doc, view!.Id, tmpdir, filename);
+                var size = Utils.BytesToString(new FileInfo(path).Length);
+                progressViewModel.Dispatcher.Invoke(() => progressViewModel.AddLogMessage($"Exported {filename}: {size}"));
 
-            return path;
+                return path;
+            }
+            catch (StlExportFailed)
+            {
+                progressViewModel.Dispatcher.Invoke(() => progressViewModel.AddLogMessage($"Could not export {filename} because it would be empty."));
+                return null;
+            }
         }
 
         private static async Task UploadGeometries(
