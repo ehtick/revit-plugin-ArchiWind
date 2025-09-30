@@ -55,14 +55,14 @@
 
                 <TextBlock Grid.Row="0" Margin="5" LineHeight="18">
                     In order to use ArchiWind, you have to
-                    <Hyperlink NavigateUri="https://account.nablaflow.io/registration" RequestNavigate="OpenLink">
+                    <Hyperlink NavigateUri="https://archiwind.nablaflow.io/registration" RequestNavigate="OpenLink">
                         register and activate an account.
                     </Hyperlink>
                     
                     <LineBreak/>
                     
                     Then you can 
-                    <Hyperlink NavigateUri="https://account.nablaflow.io/developer/api" RequestNavigate="OpenLink">
+                    <Hyperlink NavigateUri="https://archiwind.nablaflow.io/developer/api" RequestNavigate="OpenLink">
                         generate your API Personal Access Token
                     </Hyperlink>
                     and enter it here.
