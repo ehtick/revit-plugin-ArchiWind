@@ -88,7 +88,7 @@ To execute your NUKE build locally, you can follow these steps:
 1. **Install NUKE as a global tool**. First, make sure you have NUKE installed as a global tool. You can install it using dotnet CLI:
 
     ```shell
-    dotnet tool install Nuke.GlobalTool --global
+    dotnet tool install Nuke.GlobalTool --global --version 9.0.4
     ```
 
    You only need to do this once on your machine.
