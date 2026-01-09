@@ -1,3 +1,7 @@
+# 1.0.0-rc.6
+
+- Added tooltips to Ribbon icons.
+
 # 1.0.0-rc.5
 
 - Fixed links to defunct account.nablaflow.io
