@@ -1,3 +1,7 @@
+# 1.0.0-rc.7
+
+- Added F1 links to docs.nablaflow.io to Ribbon tooltips.
+
 # 1.0.0-rc.6
 
 - Added tooltips to Ribbon icons.
