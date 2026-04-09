@@ -1,4 +1,5 @@
 ﻿using ArchiwindRevitAddIn.Api.Models;
+using ArchiwindRevitAddIn.Api.V1.Projects;
 using ArchiWindRevitAddIn.Exceptions;
 using ArchiWindRevitAddIn.Extensions;
 using ArchiWindRevitAddIn.Models;
@@ -206,7 +207,9 @@ namespace ArchiWindRevitAddIn.ViewModels
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                var response = await ServiceLocator.ApiClient.V1.Projects.GetAsProjectsGetResponseAsync();
+                var response = await ServiceLocator.ApiClient.V1.Projects.GetAsProjectsGetResponseAsync(r => {
+                    r.QueryParameters.StatusAsProjectStatus = ProjectStatus.Active;
+                });
 
                 Projects.Clear();
 
@@ -217,13 +220,18 @@ namespace ArchiWindRevitAddIn.ViewModels
                         Projects.Add(project);
                     }
                 }
-
-                SelectedProject = Projects.Count > 0 ? Projects.First() : null;
-
-                if (SelectedProject != null)
+            
+                if (Projects.Count == 0)
                 {
-                    IsProjectSelectionEnabled = true;
+                    TaskDialog.Show("No active projects found!",
+                                $"Create a new ArchiWind project from the browser, then click on the \"Refresh\" button.",
+                                TaskDialogCommonButtons.Ok,
+                                TaskDialogResult.Ok);
+                    return;
                 }
+
+                SelectedProject = Projects.First();
+                IsProjectSelectionEnabled = true;
             }
             catch (NoTokenConfigured)
             {

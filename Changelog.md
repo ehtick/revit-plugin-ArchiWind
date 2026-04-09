@@ -1,5 +1,6 @@
 # Unreleased
 
+- Fixed an issue when user has no active projects.
 - Added support for Revit 2027.
 - Dropped support for Revit 2022.
 - Upgraded Nice3point.Revit.Sdk to 6.2.1
