@@ -1,4 +1,4 @@
-# Unreleased
+# 1.0.0
 
 - Fixed an issue when user has no active projects.
 - Added support for Revit 2027.
