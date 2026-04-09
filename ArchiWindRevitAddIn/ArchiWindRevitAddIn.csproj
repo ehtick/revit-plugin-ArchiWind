@@ -1,6 +1,8 @@
 <Project Sdk="Nice3point.Revit.Sdk/6.2.1">
 
     <PropertyGroup>
+        <Copyright>Copyright (c) 2026 NablaFlow AS</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <UseWPF>true</UseWPF>
         <UseWindowsForms Condition="$(RevitVersion) &lt; 2025">true</UseWindowsForms>
         <DeployAddin>true</DeployAddin>
