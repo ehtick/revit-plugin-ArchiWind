@@ -1,6 +1,7 @@
 # Unreleased
 
 - Added support for Revit 2027.
+- Dropped support for Revit 2022.
 - Upgraded Nice3point.Revit.Sdk to 6.2.1
 - Upgraded various dependencies.
 
